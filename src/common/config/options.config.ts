@@ -1,4 +1,4 @@
-import envSchema from './env.schema';
+import envSchema from './env-schema.config';
 
 export default {
     isGlobal: true,
