@@ -16,4 +16,14 @@ export default z.object({
         .int()
         .min(1)
         .max(65535),
+
+    MONGO_HOST: z.string().default('localhost'),
+
+    MONGO_PORT: z.coerce
+        .number()
+        .int()
+        .min(1)
+        .max(65535),
+
+    MONGO_DB: z.string().default('airbnb-clone-api')
 });
