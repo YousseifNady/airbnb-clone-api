@@ -6,6 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import mongoOptions from './common/config/mongo-db.config';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { ResponseInterceptor } from './common/interceptors/response.nterceptor';
 
 @Module({
   imports: [
@@ -20,6 +21,10 @@ import { AuthModule } from './auth/auth.module';
       provide: 'APP_FILTER',
       useClass: CustomExceptionFilter,
     },
+    {
+      provide: 'APP_INTERCEPTOR',
+      useClass: ResponseInterceptor,
+    }
   ],
 })
 export class AppModule {}

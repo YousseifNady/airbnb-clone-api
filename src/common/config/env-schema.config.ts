@@ -12,4 +12,10 @@ export default z.object({
   MONGO_PORT: z.coerce.number().int().min(1).max(65535),
 
   MONGO_DB: z.string().default('airbnb-clone-api'),
+
+  JWT_SECRET: z.string(),
+
+  JWT_EXPIRES_IN: z.string(),
+
+  JWT_REFRESH_TOKEN_EXPIRES_IN: z.string(),
 });

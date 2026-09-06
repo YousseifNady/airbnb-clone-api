@@ -1,6 +1,6 @@
-import { ExceptionFilter, Catch, ArgumentsHost } from '@nestjs/common';
+import { ExceptionFilter, Catch, ArgumentsHost, BadRequestException } from '@nestjs/common';
 import { Response } from 'express';
-import { BaseCustomException } from '../Exceptions/base.exception';
+import { BaseCustomException } from '../exceptions/base.exception';
 
 @Catch()
 export class CustomExceptionFilter implements ExceptionFilter {
@@ -12,6 +12,23 @@ export class CustomExceptionFilter implements ExceptionFilter {
       response.status(exception.status).json({
         statusCode: exception.status,
         message: exception.message,
+      });
+    }
+    
+    if (exception instanceof BadRequestException) {
+      const exceptionResponse = exception.getResponse();
+
+      const errors =
+        typeof exceptionResponse === 'object' &&
+        exceptionResponse !== null &&
+        'message' in exceptionResponse
+          ? exceptionResponse.message
+          : exception.message;
+
+      return response.status(400).json({
+        success: false,
+        message: 'Validation failed',
+        errors,
       });
     }
 
