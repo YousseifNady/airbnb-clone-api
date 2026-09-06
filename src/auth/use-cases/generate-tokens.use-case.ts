@@ -1,12 +1,13 @@
-import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
+import { Model } from "mongoose";
 import { StringValue } from "ms";
-import bcrypt from 'bcrypt';
 import { RefreshToken } from "../schemas/refresh-token.schema";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import { ConfigService } from "@nestjs/config";
+import bcrypt from 'bcrypt';
+import { ResponseDto } from "../dtos/response.dto";
 
-export class GenerateRefreshTokenUseCase {
+export class GenerateTokensUseCase {
 
     constructor(
         private readonly jwtService: JwtService,
@@ -14,7 +15,18 @@ export class GenerateRefreshTokenUseCase {
         @InjectModel(RefreshToken.name) private readonly refreshTokenModel: Model<RefreshToken>
     ) {}
 
-    async execute(userId: string): Promise<string> {
+    async execute(userId: string): Promise<ResponseDto> {
+        return {
+            accessToken: await this.generateAccessToken(userId),
+            refreshToken: await this.generateRefreshToken(userId)
+        };
+    }
+
+    private async generateAccessToken(userId: string): Promise<string> {
+        return await this.jwtService.signAsync({ userId });
+    }
+
+    private async generateRefreshToken(userId: string): Promise<string> {
         const refreshToken = await this.jwtService.signAsync(
             { userId, type: 'refresh' },
             { expiresIn: this.configService.getOrThrow<StringValue>('JWT_REFRESH_TOKEN_EXPIRES_IN') }

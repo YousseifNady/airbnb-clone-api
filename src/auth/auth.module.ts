@@ -7,8 +7,10 @@ import {  ConfigService } from '@nestjs/config';
 import { StringValue } from 'ms';
 import { MongooseModule } from '@nestjs/mongoose';
 import { RefreshToken, RefreshTokenSchema } from './schemas/refresh-token.schema';
-import { GenerateRefreshTokenUseCase } from './use-cases/generate-refresh-token.use-case';
-import { GenerateAccessTokenUseCase } from './use-cases/generate-access-token.use-case';
+import { GenerateTokensUseCase } from './use-cases/generate-tokens.use-case';
+import { LoginUseCase } from './use-cases/login.use-case';
+import { RegisterUseCase } from './use-cases/register.use-case';
+import { RefreshTokenUseCase } from './use-cases/refresh-token.use-case';
 
 @Module({
   imports: [
@@ -25,6 +27,12 @@ import { GenerateAccessTokenUseCase } from './use-cases/generate-access-token.us
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, GenerateAccessTokenUseCase, GenerateRefreshTokenUseCase],
+  providers: [
+    AuthService,
+    GenerateTokensUseCase,
+    RegisterUseCase,
+    LoginUseCase,
+    RefreshTokenUseCase
+  ],
 })
 export class AuthModule {}

@@ -2,8 +2,8 @@ import { Expose } from 'class-transformer';
 
 export class ResponseDto {
   @Expose()
-  access_token!: string;
+  accessToken!: string;
 
   @Expose()
-  refresh_token!: string;
+  refreshToken!: string;
 }

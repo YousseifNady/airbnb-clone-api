@@ -1,4 +1,4 @@
-import { RegisterUserDto } from "../../auth/dtos/register.dto";
+import { RegisterUserDto } from "../../auth/dtos/register-user.dto";
 import bcrypt from 'bcrypt';
 import { BadRequestException } from "../../common/exceptions/bad-request.exception";
 import { InjectModel } from "@nestjs/mongoose";

@@ -1,27 +1,29 @@
 import { Injectable } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
-import { RegisterUserDto } from './dtos/register.dto';
+import { RegisterUserDto } from './dtos/register-user.dto';
 import { ResponseDto } from './dtos/response.dto';
-import { GenerateAccessTokenUseCase } from './use-cases/generate-access-token.use-case';
-import { GenerateRefreshTokenUseCase } from './use-cases/generate-refresh-token.use-case';
+import { LoginUserDto } from './dtos/login-user.dto';
+import { RefreshTokenDto } from './dtos/refreh-token.dto';
+import { RegisterUseCase } from './use-cases/register.use-case';
+import { LoginUseCase } from './use-cases/login.use-case';
+import { RefreshTokenUseCase } from './use-cases/refresh-token.use-case';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly generateAccessTokenUseCase: GenerateAccessTokenUseCase,
-    private readonly generateRefreshTokenUseCase: GenerateRefreshTokenUseCase,
-    private readonly userService: UsersService,
+    private readonly registerUseCase: RegisterUseCase,
+    private readonly loginUseCase: LoginUseCase,
+    private readonly refreshUseCase: RefreshTokenUseCase
   ) {}
 
   async register(data: RegisterUserDto): Promise<ResponseDto> {
-    const user = await this.userService.create(data);
+    return this.registerUseCase.execute(data);
+  }
 
-    const accessToken = await this.generateAccessTokenUseCase.execute(user._id.toString());
-    const refreshToken = await this.generateRefreshTokenUseCase.execute(user._id.toString());
+  async login(data: LoginUserDto): Promise<ResponseDto> {
+    return this.loginUseCase.execute(data);
+  }
 
-    return {
-      access_token: accessToken,
-      refresh_token: refreshToken,
-    };
+  refreshToken(data: RefreshTokenDto): Promise<ResponseDto> {
+    return this.refreshUseCase.execute(data);
   }
 }
