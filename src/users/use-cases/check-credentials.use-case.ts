@@ -6,7 +6,9 @@ import { Model } from "mongoose";
 import { UserDto } from "../dtos/user.dto";
 import { plainToClass } from "class-transformer";
 import { LoginUserDto } from "../../auth/dtos/login-user.dto";
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class CheckCredentialsUseCase {
     constructor(
         @InjectModel(User.name) private readonly userModel: Model<User>

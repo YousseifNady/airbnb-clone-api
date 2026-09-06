@@ -6,7 +6,9 @@ import { InjectModel } from "@nestjs/mongoose";
 import { ConfigService } from "@nestjs/config";
 import bcrypt from 'bcrypt';
 import { ResponseDto } from "../dtos/response.dto";
+import { Injectable } from "@nestjs/common";
 
+@Injectable()
 export class GenerateTokensUseCase {
 
     constructor(

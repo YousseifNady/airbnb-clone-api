@@ -7,7 +7,9 @@ import { Model } from "mongoose";
 import { RefreshToken } from "../schemas/refresh-token.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import bcrypt from 'bcrypt';
+import { Injectable } from "@nestjs/common";
 
+@Injectable()
 export class RefreshTokenUseCase {
   constructor(
     private readonly generateTokensUseCase: GenerateTokensUseCase,

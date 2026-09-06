@@ -6,7 +6,9 @@ import { User } from "../schemas/user.schema";
 import { Model } from "mongoose";
 import { UserDto } from "../dtos/user.dto";
 import { plainToClass } from "class-transformer";
+import { Injectable } from "@nestjs/common/decorators/core/injectable.decorator";
 
+@Injectable()
 export class CreateUserUseCase {
     constructor(
         @InjectModel(User.name) private readonly userModel: Model<User>

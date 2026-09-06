@@ -31,6 +31,7 @@ export class CustomExceptionFilter implements ExceptionFilter {
         errors,
       });
     }
+    console.error('Unhandled exception:', exception);
 
     response.status(500).json({
       statusCode: 500,
