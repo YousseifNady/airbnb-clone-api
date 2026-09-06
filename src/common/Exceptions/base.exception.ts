@@ -1,8 +1,7 @@
-
 export abstract class BaseCustomException extends Error {
-    abstract status: number;
+  abstract status: number;
 
-    protected constructor(message: string) {
-        super(message);
-    }
+  protected constructor(message: string) {
+    super(message);
+  }
 }

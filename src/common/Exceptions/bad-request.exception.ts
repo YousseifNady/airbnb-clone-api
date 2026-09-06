@@ -1,9 +1,9 @@
-import { BaseCustomException } from "./base.exception";
+import { BaseCustomException } from './base.exception';
 
 export class BadRequestException extends BaseCustomException {
-    status = 400;
+  status = 400;
 
-    constructor(message: string) {
-        super(message);
-    }
+  constructor(message: string) {
+    super(message);
+  }
 }

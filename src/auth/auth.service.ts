@@ -4,9 +4,9 @@ import { RegisterUserDto } from './dtos/register-user.dto';
 
 @Injectable()
 export class AuthService {
-    constructor(private readonly userService: UsersService) { }
+  constructor(private readonly userService: UsersService) {}
 
-    register(data: RegisterUserDto) {
-
-    }
+  register(data: RegisterUserDto) {
+    return data;
+  }
 }
