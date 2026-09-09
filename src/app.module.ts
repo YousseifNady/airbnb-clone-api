@@ -1,5 +1,5 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { Module, ValidationPipe } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import configOptions from './common/config/options.config';
 import { CustomExceptionFilter } from './common/filters/custom-exception.filter';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -7,6 +7,8 @@ import mongoOptions from './common/config/mongo-db.config';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { ResponseInterceptor } from './common/interceptors/response.nterceptor';
+import { getValidationPipeConfig } from './common/config/validation-pipe.config';
+import { APP_FILTER, APP_PIPE, APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -18,13 +20,20 @@ import { ResponseInterceptor } from './common/interceptors/response.nterceptor';
   controllers: [],
   providers: [
     {
-      provide: 'APP_FILTER',
+      provide: APP_FILTER,
       useClass: CustomExceptionFilter,
     },
     {
-      provide: 'APP_INTERCEPTOR',
+      provide: APP_INTERCEPTOR,
       useClass: ResponseInterceptor,
-    }
+    },
+    {
+      provide: APP_PIPE,
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        return new ValidationPipe(getValidationPipeConfig(configService));
+      },
+    },
   ],
 })
-export class AppModule {}
+export class AppModule { }
