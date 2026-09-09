@@ -17,6 +17,7 @@ export class AuthController {
   @Post('register')
   @RegisterSwagger()
   register(@Body() body: RegisterUserDto): Promise<ResponseDto> {
+    throw new Error('fdfdfdf');
     return this.authService.register(body);
   }
 
