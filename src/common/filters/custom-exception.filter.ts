@@ -1,5 +1,11 @@
-import { ExceptionFilter, Catch, ArgumentsHost, BadRequestException } from '@nestjs/common';
+import {
+  ArgumentsHost,
+  BadRequestException as NestBadRequestException,
+  Catch,
+  ExceptionFilter,
+} from '@nestjs/common';
 import { Response } from 'express';
+
 import { BaseCustomException } from '../exceptions/base.exception';
 
 @Catch()
@@ -9,13 +15,13 @@ export class CustomExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
 
     if (exception instanceof BaseCustomException) {
-      response.status(exception.status).json({
-        statusCode: exception.status,
+      return response.status(exception.status).json({
+        success: false,
         message: exception.message,
       });
     }
-    
-    if (exception instanceof BadRequestException) {
+
+    if (exception instanceof NestBadRequestException) {
       const exceptionResponse = exception.getResponse();
 
       const errors =
@@ -31,10 +37,11 @@ export class CustomExceptionFilter implements ExceptionFilter {
         errors,
       });
     }
+
     console.error('Unhandled exception:', exception);
 
-    response.status(500).json({
-      statusCode: 500,
+    return response.status(500).json({
+      success: false,
       message: 'Internal server error',
     });
   }
