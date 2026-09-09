@@ -1,8 +1,13 @@
 import { z } from 'zod';
 
+export const APP_ENV_LOCAL = 'local';
+export const APP_ENV_DEVELOPMENT = 'development';
+export const APP_ENV_STAGING = 'staging';
+export const APP_ENV_PRODUCTION = 'production';
+
 export default z.object({
   APP_NAME: z.string().default('Airbnb Clone Api'),
-  APP_ENV: z.enum(['local', 'development', 'staging', 'production']),
+  APP_ENV: z.enum([APP_ENV_LOCAL, APP_ENV_DEVELOPMENT, APP_ENV_STAGING, APP_ENV_PRODUCTION]),
   APP_PORT: z.coerce.number().int().min(1).max(65535),
 
   MONGO_HOST: z.string().default('localhost'),
