@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { ResponseInterceptor } from './common/interceptors/response.nterceptor';
 import { getValidationPipeConfig } from './common/config/validation-pipe.config';
 import { APP_FILTER, APP_PIPE, APP_INTERCEPTOR } from '@nestjs/core';
+import { CountriesModule } from './countries/countries.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { APP_FILTER, APP_PIPE, APP_INTERCEPTOR } from '@nestjs/core';
     MongooseModule.forRootAsync(mongoOptions),
     UsersModule,
     AuthModule,
+    CountriesModule,
   ],
   controllers: [],
   providers: [
