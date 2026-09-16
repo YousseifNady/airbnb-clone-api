@@ -1,6 +1,7 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { CountriesService } from './countries.service';
 import { StoreCountryDto } from './dtos/store-country.dto';
+import { GetCountryDto } from './dtos/get-country.dto';
 
 @Controller('countries')
 export class CountriesController {
@@ -9,8 +10,8 @@ export class CountriesController {
     ) { }
 
     @Get('/')
-    index() {
-        return this.countriesService.getAll();
+    index(@Query() queryParams: GetCountryDto) {
+        return this.countriesService.getAll(queryParams);
     }
 
     @Post('/')
