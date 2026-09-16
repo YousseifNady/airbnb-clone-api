@@ -1,4 +1,5 @@
 import { Expose, Transform } from "class-transformer";
+import { CountriesDto } from "../../countries/dtos/countries.dto";
 
 export class CitiesDto {
     @Expose()
@@ -7,4 +8,7 @@ export class CitiesDto {
 
     @Expose()
     name!: string;
+
+    @Expose()
+    country!: CountriesDto;
 }

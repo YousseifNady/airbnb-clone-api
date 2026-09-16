@@ -18,8 +18,10 @@ export class CitiesService {
 
     async getAll(data: GetCityDto) {
         const query = this.citiesModel.find({
-            name: data.name
-        });
+            name: data.name,
+            country_id: data.country_id
+        })
+            .populate('country');
 
         return new Pagination(
             query,
@@ -31,7 +33,8 @@ export class CitiesService {
 
     async store(data: UpdateOrStoreCityDto): Promise<CitiesDto> {
         const existingCountry = await this.citiesModel.findOne({
-            name: data.name
+            name: data.name,
+            country_id: data.country_id
         });
 
         if (existingCountry) {
@@ -44,7 +47,7 @@ export class CitiesService {
     }
 
     async show(id: string): Promise<CitiesDto> {
-        const existingCountry = await this.citiesModel.findById(id);
+        const existingCountry = await this.citiesModel.findById(id).populate('country');
 
         if (!existingCountry) {
             throw new BadRequestException('City Not Found');
