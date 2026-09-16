@@ -10,6 +10,7 @@ import { ResponseInterceptor } from './common/interceptors/response.nterceptor';
 import { getValidationPipeConfig } from './common/config/validation-pipe.config';
 import { APP_FILTER, APP_PIPE, APP_INTERCEPTOR } from '@nestjs/core';
 import { CountriesModule } from './countries/countries.module';
+import { CitiesModule } from './cities/cities.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { CountriesModule } from './countries/countries.module';
     UsersModule,
     AuthModule,
     CountriesModule,
+    CitiesModule,
   ],
   controllers: [],
   providers: [
