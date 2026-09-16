@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { softDeletePlugin } from '../../common/mongoose/plugins/soft-delete.plugin';
 
 @Schema({
     timestamps: true,
@@ -10,12 +11,8 @@ export class Country {
 
     @Prop({ required: true, unique: true })
     country_code!: string;
-
-    @Prop({ default: false })
-    is_deleted!: string;
-
-    @Prop({ default: null })
-    deleted_at!: Date | null;
 }
 
 export const CountrySchema = SchemaFactory.createForClass(Country);
+
+CountrySchema.plugin(softDeletePlugin);

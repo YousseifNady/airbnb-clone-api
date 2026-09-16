@@ -18,7 +18,7 @@ export class CountriesService {
 
     async getAll(data: GetCountryDto) {
         const query = this.countriesModel.find({
-            name: data.name,
+            name: data.name
         });
 
         return new Pagination(
@@ -77,6 +77,13 @@ export class CountriesService {
             throw new BadRequestException('Country Not Found');
         }
 
-        await this.countriesModel.deleteOne({ id });
+        await this.countriesModel.findByIdAndUpdate(
+            id,
+            {
+                $set: {
+                    deleted_at: Date.now()
+                }
+            },
+        );
     }
 }

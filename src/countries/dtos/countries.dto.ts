@@ -1,7 +1,8 @@
-import { Expose } from "class-transformer";
+import { Expose, Transform } from "class-transformer";
 
 export class CountriesDto {
     @Expose()
+    @Transform(({ obj }) => obj._id.toString())
     id!: string;
 
     @Expose()
