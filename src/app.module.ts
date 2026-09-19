@@ -11,6 +11,7 @@ import { getValidationPipeConfig } from './common/config/validation-pipe.config'
 import { APP_FILTER, APP_PIPE, APP_INTERCEPTOR } from '@nestjs/core';
 import { CountriesModule } from './countries/countries.module';
 import { CitiesModule } from './cities/cities.module';
+import { SystemadimnsModule } from './systemadimns/systemadimns.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { CitiesModule } from './cities/cities.module';
     AuthModule,
     CountriesModule,
     CitiesModule,
+    SystemadimnsModule,
   ],
   controllers: [],
   providers: [

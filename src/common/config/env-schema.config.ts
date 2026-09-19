@@ -28,4 +28,8 @@ export default z.object({
   SWAGGER_DESCRIPTION: z.string().default('The Airbnb Clone API description'),
   SWAGGER_VERSION: z.string().default('1.0.0'),
   SWAGGER_PATH: z.string().default('api/docs'),
+
+  SYSTEM_ADMIN_NAME: z.string(),
+  SYSTEM_ADMIN_EMAIL: z.string(),
+  SYSTEM_ADMIN_PASSWORD: z.string(),
 });
