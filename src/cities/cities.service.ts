@@ -7,6 +7,7 @@ import { CitiesDto } from './dtos/cities.dto';
 import { GetCityDto } from './dtos/get-city.dto';
 import { plainToInstance } from 'class-transformer';
 import { UpdateOrStoreCityDto } from './dtos/update-or-store-city.dto';
+import { CityFilter } from './filters/cities.filter';
 
 @Injectable()
 export class CitiesService {
@@ -17,11 +18,9 @@ export class CitiesService {
     ) { }
 
     async getAll(data: GetCityDto) {
-        const query = this.citiesModel.find({
-            name: data.name,
-            country_id: data.country_id
-        })
-            .populate('country');
+        const filter = CityFilter.build(data);
+
+        const query = this.citiesModel.find(filter).populate('country');
 
         return new Pagination(
             query,
