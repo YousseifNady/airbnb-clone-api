@@ -8,6 +8,7 @@ import { BadRequestException } from '../common/exceptions/bad-request.exception'
 import { StoreCountryDto } from './dtos/store-country.dto';
 import { GetCountryDto } from './dtos/get-country.dto';
 import { Pagination } from '../common/helpers/pagination.dto';
+import { CountryFilter } from './filters/countries.filter';
 
 @Injectable()
 export class CountriesService {
@@ -17,9 +18,9 @@ export class CountriesService {
     ) { }
 
     async getAll(data: GetCountryDto) {
-        const query = this.countriesModel.find({
-            name: data.name
-        });
+        const filter = CountryFilter.build(data);
+
+        const query = this.countriesModel.find(filter);
 
         return new Pagination(
             query,

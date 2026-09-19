@@ -10,5 +10,5 @@ export class CitiesDto {
     name!: string;
 
     @Expose()
-    country!: CountriesDto;
+    country_id!: CountriesDto;
 }
