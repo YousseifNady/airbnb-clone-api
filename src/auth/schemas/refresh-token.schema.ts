@@ -6,7 +6,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 })
 export class RefreshToken {
   @Prop({ required: true })
-  userId!: string;
+  principalId!: string;
 
   @Prop({ required: true })
   refreshToken!: string;

@@ -5,18 +5,24 @@ import { InjectModel } from '@nestjs/mongoose';
 import bcrypt from 'bcrypt';
 import { StringValue } from 'ms';
 import { Model } from 'mongoose';
-
 import { UsersService } from '../users/users.service';
-import { LoginUserDto } from './dtos/login-user.dto';
 import { RefreshTokenDto } from './dtos/refreh-token.dto';
 import { RegisterUserDto } from './dtos/register-user.dto';
 import { ResponseDto } from './dtos/response.dto';
 import { ForbiddenException } from '../common/exceptions/forbidden.exception';
 import { RefreshToken } from './schemas/refresh-token.schema';
+import { LoginDto } from './dtos/login.dto';
+import { Roles } from '../common/enums/role.enum';
+import { SystemadimnsService } from '../systemadimns/systemadimns.service';
+import { UnAuthorizedException } from '../common/exceptions/unauthorized.exception';
+import { UserDto } from '../users/dtos/user.dto';
+import { SystemAdminDto } from '../systemadimns/dtos/system-admin.dto';
+import { AuthenticatedRequest } from './interfaces/auth-request.interface';
 
 @Injectable()
 export class AuthService {
   constructor(
+    private readonly systemAdminService: SystemadimnsService,
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
@@ -28,17 +34,23 @@ export class AuthService {
   async register(data: RegisterUserDto): Promise<ResponseDto> {
     const user = await this.usersService.create(data);
 
-    return this.generateTokens(user._id.toString());
+    return this.generateTokens(Roles.USER, user._id.toString());
   }
 
-  async login(data: LoginUserDto): Promise<ResponseDto> {
-    const user = await this.usersService.checkCredentials(data);
+  async login(data: LoginDto): Promise<ResponseDto> {
+    let principal;
 
-    return this.generateTokens(user._id.toString());
+    if(data.role == Roles.SYSTEM_ADMIN) {
+      principal = await this.systemAdminService.checkCredentials(data);
+    } else {
+      principal = await this.usersService.checkCredentials(data);
+    }
+
+    return this.generateTokens(data.role, principal._id.toString());
   }
 
   async refreshToken(data: RefreshTokenDto): Promise<ResponseDto> {
-    let payload: { userId: string; type?: string };
+    let payload: { role: string, principalId: string; type?: string };
 
     try {
       payload = await this.jwtService.verifyAsync(data.refresh_token);
@@ -51,7 +63,7 @@ export class AuthService {
     }
 
     const refreshToken = await this.refreshTokenModel.findOne({
-      userId: payload.userId,
+      principalId: payload.principalId,
     });
 
     if (!refreshToken) {
@@ -67,40 +79,71 @@ export class AuthService {
       throw new ForbiddenException('Invalid refresh token');
     }
 
-    return this.generateTokens(refreshToken.userId);
+    return this.generateTokens(payload.role, refreshToken.principalId);
   }
 
-  private async generateTokens(userId: string): Promise<ResponseDto> {
+  private async generateTokens(role: string, principalId: string): Promise<ResponseDto> {
     return {
-      accessToken: await this.generateAccessToken(userId),
-      refreshToken: await this.generateRefreshToken(userId),
+      accessToken: await this.generateAccessToken(role, principalId),
+      refreshToken: await this.generateRefreshToken(role, principalId),
     };
   }
 
-  private async generateAccessToken(userId: string): Promise<string> {
-    return this.jwtService.signAsync({ userId });
+  private async generateAccessToken(role: string, principalId: string): Promise<string> {
+    return this.jwtService.signAsync(
+      { principalId, role },
+      {
+        expiresIn: this.configService.getOrThrow<StringValue>('JWT_ACCESS_TOKEN_EXPIRES_IN'),
+      },
+    );
   }
 
-  private async generateRefreshToken(userId: string): Promise<string> {
+  private async generateRefreshToken(role: string, principalId: string): Promise<string> {
     const refreshToken = await this.jwtService.signAsync(
       {
-        userId,
+        principalId,
+        role,
         type: 'refresh',
       },
       {
-        expiresIn: this.configService.getOrThrow<StringValue>(
-          'JWT_REFRESH_TOKEN_EXPIRES_IN',
-        ),
+        expiresIn: this.configService.getOrThrow<StringValue>('JWT_REFRESH_TOKEN_EXPIRES_IN'),
       },
     );
 
     const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
 
     await this.refreshTokenModel.create({
-      userId,
+      principalId,
+      role,
       refreshToken: hashedRefreshToken,
     });
 
     return refreshToken;
+  }
+
+  public async injectPrincipalIntoRequest(request: AuthenticatedRequest): Promise<void>
+  {
+    const bearerToken = request.headers.authorization?.split(' ')[1];
+
+    if(!bearerToken) {
+      throw new UnAuthorizedException('unauthorized');
+    }
+
+    try {
+      const { role, principalId } = await this.jwtService.verify(bearerToken);
+
+      let injectData: UserDto | SystemAdminDto;
+
+      if(role == Roles.USER) {
+        injectData = await this.usersService.findById(principalId);
+      } else {
+        injectData = await this.systemAdminService.findById(principalId);
+      }
+
+      request.principal  = injectData;
+
+    } catch (e) {
+      throw new UnAuthorizedException('unauthorized');
+    }
   }
 }

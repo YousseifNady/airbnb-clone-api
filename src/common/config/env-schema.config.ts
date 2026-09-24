@@ -16,6 +16,7 @@ export default z.object({
 
   JWT_SECRET: z.string(),
   JWT_EXPIRES_IN: z.string(),
+  JWT_ACCESS_TOKEN_EXPIRES_IN: z.string(),
   JWT_REFRESH_TOKEN_EXPIRES_IN: z.string(),
 
   // Validation Pipe Configurations

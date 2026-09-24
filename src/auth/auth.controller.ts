@@ -2,7 +2,7 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterUserDto } from './dtos/register-user.dto';
 import { ResponseDto } from './dtos/response.dto';
-import { LoginUserDto } from './dtos/login-user.dto';
+import { LoginDto } from './dtos/login.dto';
 import { RefreshTokenDto } from './dtos/refreh-token.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { RegisterSwagger } from './decorators/swagger/register.swagger.decorator';
@@ -17,13 +17,12 @@ export class AuthController {
   @Post('register')
   @RegisterSwagger()
   register(@Body() body: RegisterUserDto): Promise<ResponseDto> {
-    throw new Error('fdfdfdf');
     return this.authService.register(body);
   }
 
   @Post('login')
   @LoginSwagger()
-  login(@Body() body: LoginUserDto): Promise<ResponseDto> {
+  login(@Body() body: LoginDto): Promise<ResponseDto> {
     return this.authService.login(body);
   }
 

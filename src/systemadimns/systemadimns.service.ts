@@ -1,9 +1,12 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { BadRequestException, Injectable, OnModuleInit } from '@nestjs/common';
 import { SystemAdmin } from './schema/system-admin.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
+import { plainToInstance } from 'class-transformer';
+import { SystemAdminDto } from './dtos/system-admin.dto';
+import { LoginDto } from '../auth/dtos/login.dto';
 
 @Injectable()
 export class SystemadimnsService implements OnModuleInit {
@@ -34,5 +37,38 @@ export class SystemadimnsService implements OnModuleInit {
             password: hashedPassword,
             is_super_admin: true
         });
+    }
+
+    async checkCredentials(data: LoginDto): Promise<SystemAdminDto> {
+        const existingUser = await this.systemAdminModel.findOne({
+            email: data.email,
+        });
+
+        if (!existingUser) {
+            throw new BadRequestException('Invalid email or password');
+        }
+
+        const isPasswordValid = await bcrypt.compare(
+            data.password,
+            existingUser.password,
+        );
+
+        if (!isPasswordValid) {
+            throw new BadRequestException('Invalid email or password');
+        }
+
+        return plainToInstance(SystemAdminDto, existingUser.toObject());
+    }
+
+
+    
+    async findById(id: string) {
+    const existingSystemAdmin = await this.systemAdminModel.findById(id);
+
+    if (!existingSystemAdmin) {
+        throw new BadRequestException('System Admin not found');
+    }
+    
+    return plainToInstance(SystemAdminDto, existingSystemAdmin.toObject());
     }
 }
