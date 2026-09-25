@@ -1,9 +1,14 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { CurrenciesService } from './currencies.service';
 import { UpsertCurrenciesDto } from './dtos/upsert-currency.dto';
 import { GetCurrencyDto } from './dtos/get-currency.dto';
+import { AuthGuard } from '../auth/guards/auth.guard';
+import { Roles } from '../common/enums/role.enum';
+import { Role } from '../auth/decorators/role.decorator';
 
 @Controller('currencies')
+@UseGuards(AuthGuard)
+@Role(Roles.SYSTEM_ADMIN)
 export class CurrenciesController {
     constructor(
         private readonly currenciesService: CurrenciesService

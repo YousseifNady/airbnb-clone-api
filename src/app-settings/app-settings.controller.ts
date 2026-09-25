@@ -3,7 +3,7 @@ import { AppSettingsService } from './app-settings.service';
 import { AppSettingsDto } from './dtos/app-settings.dto';
 import { UpsertAppSettingDto } from './dtos/upsert-app-settings.dto';
 import { Role } from '../auth/decorators/role.decorator';
-import { AuthGuard } from '../auth/guards/auth-guard.guard';
+import { AuthGuard } from '../auth/guards/auth.guard';
 import { Roles } from '../common/enums/role.enum';
 
 @Controller('app-settings')

@@ -1,15 +1,22 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { CountriesService } from './countries.service';
 import { UpsertCountryDto } from './dtos/upsert-country.dto';
 import { GetCountryDto } from './dtos/get-country.dto';
+import { AuthGuard } from '../auth/guards/auth.guard';
+import { Roles } from '../common/enums/role.enum';
+import { Role } from '../auth/decorators/role.decorator';
+import { Public } from '../auth/decorators/public.decorator';
 
 @Controller('countries')
+@UseGuards(AuthGuard)
+@Role(Roles.SYSTEM_ADMIN)
 export class CountriesController {
     constructor(
         private readonly countriesService: CountriesService
     ) { }
 
     @Get('/')
+    @Public()
     index(@Query() queryParams: GetCountryDto) {
         return this.countriesService.getAll(queryParams);
     }

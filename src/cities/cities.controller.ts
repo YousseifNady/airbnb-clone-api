@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } fro
 import { CitiesService } from './cities.service';
 import { UpdateOrStoreCityDto } from './dtos/update-or-store-city.dto';
 import { GetCityDto } from './dtos/get-city.dto';
-import { AuthGuard } from '../auth/guards/auth-guard.guard';
+import { AuthGuard } from '../auth/guards/auth.guard';
 import { Roles } from '../common/enums/role.enum';
 import { Role } from '../auth/decorators/role.decorator';
 
