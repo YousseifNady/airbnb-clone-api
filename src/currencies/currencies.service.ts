@@ -31,51 +31,51 @@ export class CurrenciesService {
     }
 
     async store(data: UpsertCurrenciesDto): Promise<CurrenciesDto> {
-        const existingCountry = await this.currenciesModel.findOne({
+        const existingCurrency = await this.currenciesModel.findOne({
             name: data.name,
-            country_code: data.currency_code
+            currency_code: data.currency_code
         });
 
-        if (existingCountry) {
-            throw new BadRequestException('Country Already Exists');
+        if (existingCurrency) {
+            throw new BadRequestException('Currency Already Exists');
         }
 
-        const newCountry = await this.currenciesModel.create(data);
+        const newCurrency = await this.currenciesModel.create(data);
 
-        return plainToInstance(CurrenciesDto, newCountry);
+        return plainToInstance(CurrenciesDto, newCurrency);
     }
 
     async show(id: string): Promise<CurrenciesDto> {
-        const existingCountry = await this.currenciesModel.findById(id);
+        const existingCurrency = await this.currenciesModel.findById(id);
 
-        if (!existingCountry) {
-            throw new BadRequestException('Country Not Found');
+        if (!existingCurrency) {
+            throw new BadRequestException('Currency Not Found');
         }
 
-        return plainToInstance(CurrenciesDto, existingCountry);
+        return plainToInstance(CurrenciesDto, existingCurrency);
     }
 
     async update(id: string, data: UpsertCurrenciesDto): Promise<CurrenciesDto> {
-        const existingCountry = await this.currenciesModel.findById(id);
+        const existingCurrency = await this.currenciesModel.findById(id);
 
-        if (!existingCountry) {
-            throw new BadRequestException('Country Not Found');
+        if (!existingCurrency) {
+            throw new BadRequestException('Currency Not Found');
         }
 
-        const country = await this.currenciesModel.findByIdAndUpdate(
+        const currency = await this.currenciesModel.findByIdAndUpdate(
             id,
             { $set: data },
             { new: true },
         );
 
-        return plainToInstance(CurrenciesDto, country);
+        return plainToInstance(CurrenciesDto, currency);
     }
 
     async destroy(id: string): Promise<void> {
-        const existingCountry = await this.currenciesModel.findById(id);
+        const existingCurrency = await this.currenciesModel.findById(id);
 
-        if (!existingCountry) {
-            throw new BadRequestException('Country Not Found');
+        if (!existingCurrency) {
+            throw new BadRequestException('Currency Not Found');
         }
 
         await this.currenciesModel.findByIdAndUpdate(

@@ -14,6 +14,7 @@ import { CitiesModule } from './cities/cities.module';
 import { SystemAdimnsModule } from './system-adimns/system-adimns.module';
 import { AppSettingsModule } from './app-settings/app-settings.module';
 import { CurrenciesModule } from './currencies/currencies.module';
+import { UnitCategoriesModule } from './unit-categories/unit-categories.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { CurrenciesModule } from './currencies/currencies.module';
     SystemAdimnsModule,
     AppSettingsModule,
     CurrenciesModule,
+    UnitCategoriesModule,
   ],
   controllers: [],
   providers: [
