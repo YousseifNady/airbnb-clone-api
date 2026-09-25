@@ -13,10 +13,10 @@ import { ForbiddenException } from '../common/exceptions/forbidden.exception';
 import { RefreshToken } from './schemas/refresh-token.schema';
 import { LoginDto } from './dtos/login.dto';
 import { Roles } from '../common/enums/role.enum';
-import { SystemadimnsService } from '../systemadimns/systemadimns.service';
+import { SystemadimnsService } from '../system-adimns/system-adimns.service';
 import { UnAuthorizedException } from '../common/exceptions/unauthorized.exception';
 import { UserDto } from '../users/dtos/user.dto';
-import { SystemAdminDto } from '../systemadimns/dtos/system-admin.dto';
+import { SystemAdminDto } from '../system-adimns/dtos/system-admins.dto';
 import { AuthenticatedRequest } from './interfaces/auth-request.interface';
 
 @Injectable()

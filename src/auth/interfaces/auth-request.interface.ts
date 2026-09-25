@@ -1,4 +1,4 @@
-import { SystemAdminDto } from "../../systemadimns/dtos/system-admin.dto";
+import { SystemAdminDto } from "../../system-adimns/dtos/system-admins.dto";
 import { UserDto } from "../../users/dtos/user.dto";
 import { Request } from 'express';
 

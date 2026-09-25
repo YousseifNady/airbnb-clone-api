@@ -1,15 +1,15 @@
 import { BadRequestException, Injectable, OnModuleInit } from '@nestjs/common';
-import { SystemAdmin } from './schema/system-admin.schema';
+import { SystemAdmin } from './schema/system-admins.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import { plainToInstance } from 'class-transformer';
-import { SystemAdminDto } from './dtos/system-admin.dto';
+import { SystemAdminDto } from './dtos/system-admins.dto';
 import { LoginDto } from '../auth/dtos/login.dto';
 
 @Injectable()
-export class SystemadimnsService implements OnModuleInit {
+export class SystemAdimnsService implements OnModuleInit {
     constructor(
         @InjectModel(SystemAdmin.name)
         private readonly systemAdminModel: Model<SystemAdmin>,
