@@ -12,6 +12,7 @@ import { APP_FILTER, APP_PIPE, APP_INTERCEPTOR } from '@nestjs/core';
 import { CountriesModule } from './countries/countries.module';
 import { CitiesModule } from './cities/cities.module';
 import { SystemAdimnsModule } from './system-adimns/system-adimns.module';
+import { AppSettingsModule } from './app-settings/app-settings.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { SystemAdimnsModule } from './system-adimns/system-adimns.module';
     CountriesModule,
     CitiesModule,
     SystemAdimnsModule,
+    AppSettingsModule,
   ],
   controllers: [],
   providers: [
