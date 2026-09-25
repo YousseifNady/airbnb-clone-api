@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 import { plainToInstance } from 'class-transformer';
 import { Model } from 'mongoose';
 import { RegisterUserDto } from '../auth/dtos/register-user.dto';
-import { LoginUserDto } from '../auth/dtos/login-user.dto';
+import { LoginUserDto } from '../auth/dtos/login.dto';
 import { BadRequestException } from '../common/exceptions/bad-request.exception';
 import { UserDto } from './dtos/user.dto';
 import { User } from './schemas/user.schema';
@@ -62,6 +62,16 @@ export class UsersService {
       throw new BadRequestException('Invalid email or password');
     }
 
+    return plainToInstance(UserDto, existingUser.toObject());
+  }
+
+  async findById(id: string) {
+    const existingUser = await this.userModel.findById(id);
+
+    if (!existingUser) {
+      throw new BadRequestException('User not found');
+    }
+    
     return plainToInstance(UserDto, existingUser.toObject());
   }
 }

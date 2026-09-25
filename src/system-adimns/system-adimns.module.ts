@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { SystemadimnsService } from './systemadimns.service';
+import { SystemAdimnsService } from './system-adimns.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { SystemAdmin, SystemAdminSchema } from './schema/system-admin.schema';
+import { SystemAdmin, SystemAdminSchema } from './schema/system-admins.schema';
 
 @Module({
   imports: [
@@ -12,6 +12,6 @@ import { SystemAdmin, SystemAdminSchema } from './schema/system-admin.schema';
       },
     ])
   ],
-  providers: [SystemadimnsService]
+  providers: [SystemAdimnsService]
 })
-export class SystemadimnsModule { }
+export class SystemAdimnsModule { }

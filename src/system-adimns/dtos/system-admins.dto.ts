@@ -1,7 +1,7 @@
 import { Exclude, Expose } from 'class-transformer';
 import { Roles } from '../../common/enums/role.enum';
 
-export class UserDto {
+export class SystemAdminDto {
   @Expose()
   _id!: string;
 
@@ -12,10 +12,7 @@ export class UserDto {
   email!: string;
 
   @Expose()
-  phone!: string;
-
-  @Expose()
-  role: string = Roles.USER;
+  role: string = Roles.SYSTEM_ADMIN;
 
   @Exclude()
   password!: string;

@@ -6,7 +6,7 @@ import {
     ApiOperation,
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { LoginUserDto } from '../../dtos/login-user.dto';
+import { LoginUserDto } from '../../dtos/login.dto';
 
 export function LoginSwagger() {
     return applyDecorators(
