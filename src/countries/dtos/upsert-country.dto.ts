@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString } from "class-validator";
 
-export class StoreCountryDto {
+export class UpsertCountryDto {
     @IsNotEmpty()
     @IsString()
     name!: string;
