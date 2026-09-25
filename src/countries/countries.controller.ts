@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { CountriesService } from './countries.service';
-import { StoreCountryDto } from './dtos/store-country.dto';
+import { UpsertCountryDto } from './dtos/upsert-country.dto';
 import { GetCountryDto } from './dtos/get-country.dto';
 
 @Controller('countries')
@@ -15,7 +15,7 @@ export class CountriesController {
     }
 
     @Post('/')
-    store(@Body() data: StoreCountryDto) {
+    store(@Body() data: UpsertCountryDto) {
         return this.countriesService.store(data);
     }
 
@@ -25,7 +25,7 @@ export class CountriesController {
     }
 
     @Put('/:id')
-    update(@Param() id: string, @Body() data: StoreCountryDto) {
+    update(@Param() id: string, @Body() data: UpsertCountryDto) {
         return this.countriesService.update(id, data);
     }
 
