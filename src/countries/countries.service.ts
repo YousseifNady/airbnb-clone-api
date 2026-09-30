@@ -5,8 +5,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { plainToInstance } from 'class-transformer';
 import { CountriesDto } from './dtos/countries.dto';
 import { BadRequestException } from '../common/exceptions/bad-request.exception';
-import { UpsertCountryDto } from './dtos/upsert-country.dto';
-import { GetCountryDto } from './dtos/get-country.dto';
+import { UpsertCountriesDto } from './dtos/upsert-countries.dto';
+import { FindAllCountriesDto } from './dtos/find-all-countries.dto';
 import { Pagination } from '../common/helpers/pagination.dto';
 import { CountryFilter } from './filters/countries.filter';
 
@@ -17,7 +17,7 @@ export class CountriesService {
         private readonly countriesModel: Model<Country>
     ) { }
 
-    async getAll(data: GetCountryDto) {
+    async findAll(data: FindAllCountriesDto) {
         const filter = CountryFilter.build(data);
 
         const query = this.countriesModel.find(filter);
@@ -30,7 +30,7 @@ export class CountriesService {
         ).get();
     }
 
-    async store(data: UpsertCountryDto): Promise<CountriesDto> {
+    async store(data: UpsertCountriesDto): Promise<CountriesDto> {
         const existingCountry = await this.countriesModel.findOne({
             name: data.name,
             country_code: data.country_code
@@ -55,7 +55,7 @@ export class CountriesService {
         return plainToInstance(CountriesDto, existingCountry);
     }
 
-    async update(id: string, data: UpsertCountryDto): Promise<CountriesDto> {
+    async update(id: string, data: UpsertCountriesDto): Promise<CountriesDto> {
         const existingCountry = await this.countriesModel.findById(id);
 
         if (!existingCountry) {

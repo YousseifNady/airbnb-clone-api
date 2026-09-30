@@ -1,6 +1,6 @@
 import { IsMongoId, IsNotEmpty, IsString } from "class-validator";
 
-export class UpdateOrStoreCityDto {
+export class UpsertCitiesDto {
     @IsNotEmpty()
     @IsString()
     name!: string;

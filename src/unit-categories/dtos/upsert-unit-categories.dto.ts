@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString } from "class-validator";
 
-export class UpsertUnitCategoryDto {
+export class UpsertUnitCategoriesDto {
     @IsNotEmpty()
     @IsString()
     name!: string;

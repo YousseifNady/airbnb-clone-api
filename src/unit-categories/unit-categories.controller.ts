@@ -4,8 +4,8 @@ import { Public } from '../auth/decorators/public.decorator';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { Roles } from '../common/enums/role.enum';
 import { Role } from '../auth/decorators/role.decorator';
-import { GetUnitCategoryDto } from './dtos/get-unit-category.dto';
-import { UpsertUnitCategoryDto } from './dtos/upsert-unit-category.dto';
+import { FindAllUnitCategoriesDto } from './dtos/find-all-unit-categories.dto';
+import { UpsertUnitCategoriesDto } from './dtos/upsert-unit-categories.dto';
 
 @Controller('unit-categories')
 @UseGuards(AuthGuard)
@@ -17,12 +17,12 @@ export class UnitCategoriesController {
 
     @Get('/')
     @Public()
-    index(@Query() queryParams: GetUnitCategoryDto) {
-        return this.unitCategoriesService.getAll(queryParams);
+    findAll(@Query() queryParams: FindAllUnitCategoriesDto) {
+        return this.unitCategoriesService.findAll(queryParams);
     }
 
     @Post('/')
-    store(@Body() data: UpsertUnitCategoryDto) {
+    store(@Body() data: UpsertUnitCategoriesDto) {
         return this.unitCategoriesService.store(data);
     }
 
@@ -32,7 +32,7 @@ export class UnitCategoriesController {
     }
 
     @Put('/:id')
-    update(@Param() id: string, @Body() data: UpsertUnitCategoryDto) {
+    update(@Param() id: string, @Body() data: UpsertUnitCategoriesDto) {
         return this.unitCategoriesService.update(id, data);
     }
 

@@ -5,8 +5,8 @@ import { Model } from 'mongoose';
 import { CurrenciesDto } from './dtos/currencies.dto';
 import { Pagination } from '../common/helpers/pagination.dto';
 import { CurrencyFilter } from './filters/currencies.filter';
-import { GetCurrencyDto } from './dtos/get-currency.dto';
-import { UpsertCurrenciesDto } from './dtos/upsert-currency.dto';
+import { GetCurrencyDto } from './dtos/find-all-currencies.dto';
+import { UpsertCurrenciesDto } from './dtos/upsert-currencies.dto';
 import { BadRequestException } from '../common/exceptions/bad-request.exception';
 import { plainToInstance } from 'class-transformer';
 
@@ -17,7 +17,7 @@ export class CurrenciesService {
         private readonly currenciesModel: Model<Currency>
     ) { }
 
-    async getAll(data: GetCurrencyDto) {
+    async findAll(data: GetCurrencyDto) {
         const filter = CurrencyFilter.build(data);
 
         const query = this.currenciesModel.find(filter);

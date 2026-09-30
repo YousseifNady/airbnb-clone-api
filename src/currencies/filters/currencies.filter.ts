@@ -1,9 +1,9 @@
 import { FilterQuery } from "mongoose";
 import { Currency } from "../schema/currencies.schema";
-import { GetCurrencyDto } from "../dtos/get-currency.dto";
+import { FindAllCurrenciesDto } from "../dtos/find-all-currencies.dto";
 
 export class CurrencyFilter {
-    static build(query: GetCurrencyDto): FilterQuery<Currency> {
+    static build(query: FindAllCurrenciesDto): FilterQuery<Currency> {
         const filter: FilterQuery<Currency> = {};
 
         if (query.name) {

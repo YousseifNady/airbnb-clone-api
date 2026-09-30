@@ -15,8 +15,8 @@ export class AppSettingsController {
     ) {}
 
     @Get()
-    getAppSettings(): Promise<AppSettingsDto|null> {
-        return this.appSettingsService.get();
+    findAll(): Promise<AppSettingsDto|null> {
+        return this.appSettingsService.findAll();
     }
 
     @Put()

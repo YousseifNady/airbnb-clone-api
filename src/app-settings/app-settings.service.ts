@@ -13,7 +13,7 @@ export class AppSettingsService {
         private readonly appSettingsModel: Model<AppSetting>
     ) {}
 
-    async get(): Promise<AppSettingsDto|null> {
+    async findAll(): Promise<AppSettingsDto|null> {
         return await this.appSettingsModel.findOne();
     }
 

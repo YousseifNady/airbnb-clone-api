@@ -1,9 +1,9 @@
 import { FilterQuery } from "mongoose";
 import { Country } from "../schema/countries.schema";
-import { GetCountryDto } from "../dtos/get-country.dto";
+import { FindAllCountriesDto } from "../dtos/find-all-countries.dto";
 
 export class CountryFilter {
-    static build(query: GetCountryDto): FilterQuery<Country> {
+    static build(query: FindAllCountriesDto): FilterQuery<Country> {
         const filter: FilterQuery<Country> = {};
 
         if (query.name) {

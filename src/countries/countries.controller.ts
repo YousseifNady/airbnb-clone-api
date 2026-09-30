@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { CountriesService } from './countries.service';
-import { UpsertCountryDto } from './dtos/upsert-country.dto';
-import { GetCountryDto } from './dtos/get-country.dto';
+import { UpsertCountriesDto } from './dtos/upsert-countries.dto';
+import { FindAllCountriesDto } from './dtos/find-all-countries.dto';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { Roles } from '../common/enums/role.enum';
 import { Role } from '../auth/decorators/role.decorator';
@@ -17,12 +17,12 @@ export class CountriesController {
 
     @Get('/')
     @Public()
-    index(@Query() queryParams: GetCountryDto) {
-        return this.countriesService.getAll(queryParams);
+    findAll(@Query() queryParams: FindAllCountriesDto) {
+        return this.countriesService.findAll(queryParams);
     }
 
     @Post('/')
-    store(@Body() data: UpsertCountryDto) {
+    store(@Body() data: UpsertCountriesDto) {
         return this.countriesService.store(data);
     }
 
@@ -32,7 +32,7 @@ export class CountriesController {
     }
 
     @Put('/:id')
-    update(@Param() id: string, @Body() data: UpsertCountryDto) {
+    update(@Param() id: string, @Body() data: UpsertCountriesDto) {
         return this.countriesService.update(id, data);
     }
 

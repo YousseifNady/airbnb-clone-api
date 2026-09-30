@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { UnitCategory } from './schema/unit-categories.schema';
 import { Model } from 'mongoose';
-import { GetUnitCategoryDto } from './dtos/get-unit-category.dto';
+import { FindAllUnitCategoriesDto } from './dtos/find-all-unit-categories.dto';
 import { Pagination } from '../common/helpers/pagination.dto';
 import { UnitCategoryDto } from './dtos/unit-categories.dto';
 import { plainToInstance } from 'class-transformer';
 import { BadRequestException } from '../common/exceptions/bad-request.exception';
-import { UpsertUnitCategoryDto } from './dtos/upsert-unit-category.dto';
+import { UpsertUnitCategoriesDto } from './dtos/upsert-unit-categories.dto';
 import { UnitCategoryFilter } from './filters/unit-categories.filter';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class UnitCategoriesService {
         private readonly unitCategoryModel: Model<UnitCategory>
     ) { }
 
-    async getAll(data: GetUnitCategoryDto) {
+    async findAll(data: FindAllUnitCategoriesDto) {
         const filter = UnitCategoryFilter.build(data);
 
         const query = this.unitCategoryModel.find(filter);
@@ -30,7 +30,7 @@ export class UnitCategoriesService {
         ).get();
     }
 
-    async store(data: UpsertUnitCategoryDto): Promise<UnitCategoryDto> {
+    async store(data: UpsertUnitCategoriesDto): Promise<UnitCategoryDto> {
         const existingUnitCategory = await this.unitCategoryModel.findOne({
             name: data.name
         });
@@ -54,7 +54,7 @@ export class UnitCategoriesService {
         return plainToInstance(UnitCategoryDto, existingUnitCategory);
     }
 
-    async update(id: string, data: UpsertUnitCategoryDto): Promise<UnitCategoryDto> {
+    async update(id: string, data: UpsertUnitCategoriesDto): Promise<UnitCategoryDto> {
         const existingUnitCategory = await this.unitCategoryModel.findById(id);
 
         if (!existingUnitCategory) {

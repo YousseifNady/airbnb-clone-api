@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { softDeletePlugin } from '../../common/mongoose/plugins/soft-delete.plugin';
 import { Types } from 'mongoose';
+import { Country } from '../../countries/schema/countries.schema';
 
 @Schema({
     timestamps: true,
@@ -12,7 +13,7 @@ export class City {
 
     @Prop({
         type: Types.ObjectId,
-        ref: 'Country',
+        ref: Country.name,
         required: true
     })
     country_id!: Types.ObjectId;

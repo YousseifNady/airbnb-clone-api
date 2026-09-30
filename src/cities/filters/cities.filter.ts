@@ -1,9 +1,9 @@
 import { FilterQuery } from "mongoose";
 import { City } from "../schema/cities.schema";
-import { GetCityDto } from "../dtos/get-city.dto";
+import { FindAllCitiesDto } from "../dtos/find-all-cities.dto";
 
 export class CityFilter {
-    static build(query: GetCityDto): FilterQuery<City> {
+    static build(query: FindAllCitiesDto): FilterQuery<City> {
         const filter: FilterQuery<City> = {};
 
         if (query.name) {
