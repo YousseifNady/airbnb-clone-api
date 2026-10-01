@@ -29,7 +29,7 @@ export class UnitsService {
         ).get();
     }
     
-    async store(data: UpsertUnitsDto): Promise<UnitsDto> {
+    async store(data: UpsertUnitsDto, photos: Express.Multer.File[]): Promise<UnitsDto> {
         const existingUnit = await this.unitModel.findOne({
             title: data.title
         });

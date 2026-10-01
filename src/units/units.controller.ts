@@ -1,9 +1,10 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, ParseFilePipeBuilder, Post, Put, Query, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { UnitsService } from './units.service';
 import { FindAllUnitsDto } from './dtos/find-all-units.dto';
 import { UpsertUnitsDto } from './dtos/upsert-units.dto';
 import { ParseObjectIdPipe } from '@nestjs/mongoose';
 import { UnitsDto } from './dtos/units.dto';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('units')
 export class UnitsController {
@@ -19,10 +20,22 @@ export class UnitsController {
     }
 
     @Post('/')
+    @UseInterceptors(FilesInterceptor('photos'))
     async store(
-        @Body() data: UpsertUnitsDto
+        @Body() data: UpsertUnitsDto,
+        @UploadedFiles(
+            new ParseFilePipeBuilder()
+            .addFileTypeValidator({
+                fileType: /^image\/(jpeg|png|jpg)$/,
+            })
+            .addMaxSizeValidator({ maxSize: 5242880 })
+            .build({
+                errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+            }),
+        )
+        photos: Array<Express.Multer.File>
     ): Promise<UnitsDto> {
-        return await this.unitsService.store(data);
+        return await this.unitsService.store(data, photos);
     }
 
     @Get('/:id')
