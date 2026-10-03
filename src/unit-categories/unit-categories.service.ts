@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { UnitCategory } from './schema/unit-categories.schema';
 import { Model } from 'mongoose';
 import { FindAllUnitCategoriesDto } from './dtos/find-all-unit-categories.dto';
-import { Pagination } from '../common/helpers/pagination.dto';
+import { Pagination } from '../common/helpers/pagination.helper';
 import { UnitCategoryDto } from './dtos/unit-categories.dto';
 import { plainToInstance } from 'class-transformer';
 import { BadRequestException } from '../common/exceptions/bad-request.exception';

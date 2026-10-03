@@ -7,7 +7,7 @@ import { CountriesDto } from './dtos/countries.dto';
 import { BadRequestException } from '../common/exceptions/bad-request.exception';
 import { UpsertCountriesDto } from './dtos/upsert-countries.dto';
 import { FindAllCountriesDto } from './dtos/find-all-countries.dto';
-import { Pagination } from '../common/helpers/pagination.dto';
+import { Pagination } from '../common/helpers/pagination.helper';
 import { CountryFilter } from './filters/countries.filter';
 
 @Injectable()

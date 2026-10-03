@@ -16,6 +16,7 @@ import { AppSettingsModule } from './app-settings/app-settings.module';
 import { CurrenciesModule } from './currencies/currencies.module';
 import { UnitCategoriesModule } from './unit-categories/unit-categories.module';
 import { UnitsModule } from './units/units.module';
+import { FilesystemModule } from './filesystem/filesystem.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { UnitsModule } from './units/units.module';
     CurrenciesModule,
     UnitCategoriesModule,
     UnitsModule,
+    FilesystemModule,
   ],
   controllers: [],
   providers: [

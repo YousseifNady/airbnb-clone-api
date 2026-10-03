@@ -25,13 +25,13 @@ export class UnitsController {
         @Body() data: UpsertUnitsDto,
         @UploadedFiles(
             new ParseFilePipeBuilder()
-            .addFileTypeValidator({
-                fileType: /^image\/(jpeg|png|jpg)$/,
-            })
-            .addMaxSizeValidator({ maxSize: 5242880 })
-            .build({
-                errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-            }),
+                .addFileTypeValidator({
+                    fileType: /^image\/(jpeg|png|jpg)$/,
+                })
+                .addMaxSizeValidator({ maxSize: 5242880 })
+                .build({
+                    errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+                }),
         )
         photos: Array<Express.Multer.File>
     ): Promise<UnitsDto> {
@@ -46,11 +46,27 @@ export class UnitsController {
     }
 
     @Put('/:id')
-    update(
+    @UseInterceptors(FilesInterceptor('photos'))
+    async update(
         @Param('id', ParseObjectIdPipe) id: string,
-        @Body() data: UpsertUnitsDto
+
+        @Body() data: UpsertUnitsDto,
+
+        @UploadedFiles(
+            new ParseFilePipeBuilder()
+                .addFileTypeValidator({
+                    fileType: /^image\/(jpeg|png|jpg)$/,
+                })
+                .addMaxSizeValidator({
+                    maxSize: 5242880,
+                })
+                .build({
+                    errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+                }),
+        )
+        photos: Array<Express.Multer.File>,
     ): Promise<UnitsDto> {
-        return this.unitsService.update(id, data);
+        return await this.unitsService.update(id, data, photos);
     }
 
     @Delete('/:id')

@@ -1,13 +1,9 @@
 import { z } from 'zod';
-
-export const APP_ENV_LOCAL = 'local';
-export const APP_ENV_DEVELOPMENT = 'development';
-export const APP_ENV_STAGING = 'staging';
-export const APP_ENV_PRODUCTION = 'production';
+import { AppEnv } from '../enums/env.enum';
 
 export default z.object({
   APP_NAME: z.string().default('Airbnb Clone Api'),
-  APP_ENV: z.enum([APP_ENV_LOCAL, APP_ENV_DEVELOPMENT, APP_ENV_STAGING, APP_ENV_PRODUCTION]),
+  APP_ENV: z.enum(AppEnv.asArray()).default(AppEnv.LOCAL),
   APP_PORT: z.coerce.number().int().min(1).max(65535),
 
   MONGO_HOST: z.string().default('localhost'),
@@ -33,4 +29,25 @@ export default z.object({
   SYSTEM_ADMIN_NAME: z.string(),
   SYSTEM_ADMIN_EMAIL: z.string(),
   SYSTEM_ADMIN_PASSWORD: z.string(),
+
+  STORAGE_DRIVER: z.string().default('file'),
+
+  AWS_REGION: z.string().optional(),
+  AWS_ACCESS_KEY_ID: z.string().optional(),
+  AWS_SECRET_ACCESS_KEY: z.string().optional(),
+  AWS_S3_BUCKET: z.string().optional(),
+}).superRefine((data, ctx) => {
+  if (data.STORAGE_DRIVER === 's3') {
+    const awsFields = ['AWS_REGION', 'AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_S3_BUCKET'] as const;
+    
+    awsFields.forEach((field) => {
+      if (!data[field]) {
+        ctx.addIssue({
+          code: 'custom',
+          message: `${field} is required when STORAGE_DRIVER is set to s3`,
+          path: [field],
+        });
+      }
+    });
+  }
 });

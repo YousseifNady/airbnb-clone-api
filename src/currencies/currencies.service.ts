@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Currency } from './schema/currencies.schema';
 import { Model } from 'mongoose';
 import { CurrenciesDto } from './dtos/currencies.dto';
-import { Pagination } from '../common/helpers/pagination.dto';
+import { Pagination } from '../common/helpers/pagination.helper';
 import { CurrencyFilter } from './filters/currencies.filter';
 import { GetCurrencyDto } from './dtos/find-all-currencies.dto';
 import { UpsertCurrenciesDto } from './dtos/upsert-currencies.dto';

@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { City } from './schema/cities.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Pagination } from '../common/helpers/pagination.dto';
+import { Pagination } from '../common/helpers/pagination.helper';
 import { CitiesDto } from './dtos/cities.dto';
 import { FindAllCitiesDto } from './dtos/find-all-cities.dto';
 import { plainToInstance } from 'class-transformer';
