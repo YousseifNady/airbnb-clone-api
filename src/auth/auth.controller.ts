@@ -12,7 +12,7 @@ import { RefreshTokenSwagger } from './decorators/swagger/refresh-token.swagger.
 @Controller('auth')
 @ApiTags('Auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) { }
+  constructor(private readonly authService: AuthService) {}
 
   @Post('register')
   @RegisterSwagger()

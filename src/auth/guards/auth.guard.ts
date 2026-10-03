@@ -7,20 +7,20 @@ import { Reflector } from '@nestjs/core';
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
-      private readonly reflector: Reflector,
-    private readonly authService: AuthService
+    private readonly reflector: Reflector,
+    private readonly authService: AuthService,
   ) {}
-  
+
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
 
     const isPublic = this.reflector.getAllAndOverride<boolean>('is_public', [
-      context.getHandler()
+      context.getHandler(),
     ]);
 
-    if(isPublic) return true;
+    if (isPublic) return true;
 
     this.authService.injectPrincipalIntoRequest(request);
 

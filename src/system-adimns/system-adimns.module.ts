@@ -10,8 +10,9 @@ import { SystemAdmin, SystemAdminSchema } from './schema/system-admins.schema';
         name: SystemAdmin.name,
         schema: SystemAdminSchema,
       },
-    ])
+    ]),
   ],
-  providers: [SystemAdimnsService]
+  providers: [SystemAdimnsService],
+  exports: [SystemAdimnsService],
 })
-export class SystemAdimnsModule { }
+export class SystemAdimnsModule {}

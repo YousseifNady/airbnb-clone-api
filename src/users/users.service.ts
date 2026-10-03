@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 import { plainToInstance } from 'class-transformer';
 import { Model } from 'mongoose';
 import { RegisterUserDto } from '../auth/dtos/register-user.dto';
-import { LoginUserDto } from '../auth/dtos/login.dto';
+import { LoginDto } from '../auth/dtos/login.dto';
 import { BadRequestException } from '../common/exceptions/bad-request.exception';
 import { UserDto } from './dtos/user.dto';
 import { User } from './schemas/user.schema';
@@ -14,14 +14,11 @@ export class UsersService {
   constructor(
     @InjectModel(User.name)
     private readonly userModel: Model<User>,
-  ) { }
+  ) {}
 
   async create(data: RegisterUserDto): Promise<UserDto> {
     const existingUser = await this.userModel.findOne({
-      $or: [
-        { email: data.email },
-        { phone: data.phone },
-      ],
+      $or: [{ email: data.email }, { phone: data.phone }],
     });
 
     if (existingUser) {
@@ -44,7 +41,7 @@ export class UsersService {
     return plainToInstance(UserDto, newUser.toObject());
   }
 
-  async checkCredentials(data: LoginUserDto): Promise<UserDto> {
+  async checkCredentials(data: LoginDto): Promise<UserDto> {
     const existingUser = await this.userModel.findOne({
       email: data.email,
     });
@@ -71,7 +68,7 @@ export class UsersService {
     if (!existingUser) {
       throw new BadRequestException('User not found');
     }
-    
+
     return plainToInstance(UserDto, existingUser.toObject());
   }
 }

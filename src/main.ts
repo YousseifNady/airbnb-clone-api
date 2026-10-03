@@ -6,15 +6,20 @@ import { setupLogger } from './common/config/logger.config';
 import { setupSwagger } from './common/config/swagger.config';
 
 async function bootstrap() {
-  const app = await NestFactory.create<INestApplication>(AppModule, { bufferLogs: true });
+  try {
+    const app = await NestFactory.create<INestApplication>(AppModule);
 
-  const configService = app.get(ConfigService);
+    const configService = app.get(ConfigService);
 
-  setupLogger(app);
+    setupLogger(app);
 
-  setupSwagger(app);
+    setupSwagger(app);
 
-  await app.listen(configService.getOrThrow<number>('APP_PORT'));
+    await app.listen(configService.getOrThrow<number>('APP_PORT'));
+  } catch (err) {
+    console.error('Failed to start application:', err);
+    process.exit(1);
+  }
 }
 
 void bootstrap();

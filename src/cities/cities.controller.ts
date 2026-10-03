@@ -1,7 +1,17 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { CitiesService } from './cities.service';
-import { UpdateOrStoreCityDto } from './dtos/update-or-store-city.dto';
-import { GetCityDto } from './dtos/get-city.dto';
+import { UpsertCitiesDto } from './dtos/upsert-cities.dto';
+import { FindAllCitiesDto } from './dtos/find-all-cities.dto';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { Roles } from '../common/enums/role.enum';
 import { Role } from '../auth/decorators/role.decorator';
@@ -10,32 +20,30 @@ import { Role } from '../auth/decorators/role.decorator';
 @UseGuards(AuthGuard)
 @Role(Roles.SYSTEM_ADMIN)
 export class CitiesController {
-    constructor(
-        private readonly citiesService: CitiesService
-    ) { }
+  constructor(private readonly citiesService: CitiesService) {}
 
-    @Get('/')
-    index(@Query() queryParams: GetCityDto) {
-        return this.citiesService.getAll(queryParams);
-    }
+  @Get('/')
+  findAll(@Query() queryParams: FindAllCitiesDto) {
+    return this.citiesService.findAll(queryParams);
+  }
 
-    @Post('/')
-    store(@Body() data: UpdateOrStoreCityDto) {
-        return this.citiesService.store(data);
-    }
+  @Post('/')
+  store(@Body() data: UpsertCitiesDto) {
+    return this.citiesService.store(data);
+  }
 
-    @Get('/:id')
-    show(@Param() id: string) {
-        return this.citiesService.show(id);
-    }
+  @Get('/:id')
+  show(@Param() id: string) {
+    return this.citiesService.show(id);
+  }
 
-    @Put('/:id')
-    update(@Param() id: string, @Body() data: UpdateOrStoreCityDto) {
-        return this.citiesService.update(id, data);
-    }
+  @Put('/:id')
+  update(@Param() id: string, @Body() data: UpsertCitiesDto) {
+    return this.citiesService.update(id, data);
+  }
 
-    @Delete('/:id')
-    destroy(@Param() id: string) {
-        return this.citiesService.destroy(id);
-    }
+  @Delete('/:id')
+  destroy(@Param() id: string) {
+    return this.citiesService.destroy(id);
+  }
 }

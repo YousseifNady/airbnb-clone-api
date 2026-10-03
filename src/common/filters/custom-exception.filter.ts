@@ -30,8 +30,8 @@ export class CustomExceptionFilter implements ExceptionFilter {
 
       const errors =
         typeof exceptionResponse === 'object' &&
-          exceptionResponse !== null &&
-          'message' in exceptionResponse
+        exceptionResponse !== null &&
+        'message' in exceptionResponse
           ? exceptionResponse.message
           : exception.message;
 
@@ -54,19 +54,19 @@ export class CustomExceptionFilter implements ExceptionFilter {
 
   private logUnhandledException(exception: unknown, request: Request) {
     const isError = exception instanceof Error;
-    const message = isError ? exception.message : 'Unknown internal server error';
+    const message = isError
+      ? exception.message
+      : 'Unknown internal server error';
 
-    const stackArray = isError && exception.stack
-      ? exception.stack.split('\n').map((line) => line.trim())
-      : undefined;
+    const stackArray =
+      isError && exception.stack
+        ? exception.stack.split('\n').map((line) => line.trim())
+        : undefined;
 
-    this.logger.error(
-      `Unhandled Exception: ${message}`,
-      {
-        path: request.url,
-        method: request.method,
-        stack: stackArray,
-      },
-    );
+    this.logger.error(`Unhandled Exception: ${message}`, {
+      path: request.url,
+      method: request.method,
+      stack: stackArray,
+    });
   }
 }

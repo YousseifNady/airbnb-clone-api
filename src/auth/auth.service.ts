@@ -13,7 +13,7 @@ import { ForbiddenException } from '../common/exceptions/forbidden.exception';
 import { RefreshToken } from './schemas/refresh-token.schema';
 import { LoginDto } from './dtos/login.dto';
 import { Roles } from '../common/enums/role.enum';
-import { SystemadimnsService } from '../system-adimns/system-adimns.service';
+import { SystemAdimnsService } from '../system-adimns/system-adimns.service';
 import { UnAuthorizedException } from '../common/exceptions/unauthorized.exception';
 import { UserDto } from '../users/dtos/user.dto';
 import { SystemAdminDto } from '../system-adimns/dtos/system-admins.dto';
@@ -22,7 +22,7 @@ import { AuthenticatedRequest } from './interfaces/auth-request.interface';
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly systemAdminService: SystemadimnsService,
+    private readonly systemAdminService: SystemAdimnsService,
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
@@ -40,7 +40,7 @@ export class AuthService {
   async login(data: LoginDto): Promise<ResponseDto> {
     let principal;
 
-    if(data.role == Roles.SYSTEM_ADMIN) {
+    if (data.role == Roles.SYSTEM_ADMIN) {
       principal = await this.systemAdminService.checkCredentials(data);
     } else {
       principal = await this.usersService.checkCredentials(data);
@@ -50,7 +50,7 @@ export class AuthService {
   }
 
   async refreshToken(data: RefreshTokenDto): Promise<ResponseDto> {
-    let payload: { role: string, principalId: string; type?: string };
+    let payload: { role: string; principalId: string; type?: string };
 
     try {
       payload = await this.jwtService.verifyAsync(data.refresh_token);
@@ -82,23 +82,34 @@ export class AuthService {
     return this.generateTokens(payload.role, refreshToken.principalId);
   }
 
-  private async generateTokens(role: string, principalId: string): Promise<ResponseDto> {
+  private async generateTokens(
+    role: string,
+    principalId: string,
+  ): Promise<ResponseDto> {
     return {
       accessToken: await this.generateAccessToken(role, principalId),
       refreshToken: await this.generateRefreshToken(role, principalId),
     };
   }
 
-  private async generateAccessToken(role: string, principalId: string): Promise<string> {
+  private async generateAccessToken(
+    role: string,
+    principalId: string,
+  ): Promise<string> {
     return this.jwtService.signAsync(
       { principalId, role },
       {
-        expiresIn: this.configService.getOrThrow<StringValue>('JWT_ACCESS_TOKEN_EXPIRES_IN'),
+        expiresIn: this.configService.getOrThrow<StringValue>(
+          'JWT_ACCESS_TOKEN_EXPIRES_IN',
+        ),
       },
     );
   }
 
-  private async generateRefreshToken(role: string, principalId: string): Promise<string> {
+  private async generateRefreshToken(
+    role: string,
+    principalId: string,
+  ): Promise<string> {
     const refreshToken = await this.jwtService.signAsync(
       {
         principalId,
@@ -106,7 +117,9 @@ export class AuthService {
         type: 'refresh',
       },
       {
-        expiresIn: this.configService.getOrThrow<StringValue>('JWT_REFRESH_TOKEN_EXPIRES_IN'),
+        expiresIn: this.configService.getOrThrow<StringValue>(
+          'JWT_REFRESH_TOKEN_EXPIRES_IN',
+        ),
       },
     );
 
@@ -121,11 +134,12 @@ export class AuthService {
     return refreshToken;
   }
 
-  public async injectPrincipalIntoRequest(request: AuthenticatedRequest): Promise<void>
-  {
+  public async injectPrincipalIntoRequest(
+    request: AuthenticatedRequest,
+  ): Promise<void> {
     const bearerToken = request.headers.authorization?.split(' ')[1];
 
-    if(!bearerToken) {
+    if (!bearerToken) {
       throw new UnAuthorizedException('unauthorized');
     }
 
@@ -134,14 +148,13 @@ export class AuthService {
 
       let injectData: UserDto | SystemAdminDto;
 
-      if(role == Roles.USER) {
+      if (role == Roles.USER) {
         injectData = await this.usersService.findById(principalId);
       } else {
         injectData = await this.systemAdminService.findById(principalId);
       }
 
-      request.principal  = injectData;
-
+      request.principal = injectData;
     } catch (e) {
       throw new UnAuthorizedException('unauthorized');
     }

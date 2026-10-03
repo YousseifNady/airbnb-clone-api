@@ -2,89 +2,82 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { City } from './schema/cities.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Pagination } from '../common/helpers/pagination.dto';
+import { Pagination } from '../common/helpers/pagination.helper';
 import { CitiesDto } from './dtos/cities.dto';
-import { GetCityDto } from './dtos/get-city.dto';
+import { FindAllCitiesDto } from './dtos/find-all-cities.dto';
 import { plainToInstance } from 'class-transformer';
-import { UpdateOrStoreCityDto } from './dtos/update-or-store-city.dto';
+import { UpsertCitiesDto } from './dtos/upsert-cities.dto';
 import { CityFilter } from './filters/cities.filter';
 
 @Injectable()
 export class CitiesService {
+  constructor(
+    @InjectModel(City.name)
+    private readonly citiesModel: Model<City>,
+  ) {}
 
-    constructor(
-        @InjectModel(City.name)
-        private readonly citiesModel: Model<City>
-    ) { }
+  async findAll(data: FindAllCitiesDto) {
+    const filter = CityFilter.build(data);
 
-    async getAll(data: GetCityDto) {
-        const filter = CityFilter.build(data);
+    const query = this.citiesModel.find(filter).populate('country');
 
-        const query = this.citiesModel.find(filter).populate('country');
+    return new Pagination(query, CitiesDto, data.page, data.limit).get();
+  }
 
-        return new Pagination(
-            query,
-            CitiesDto,
-            data.page,
-            data.limit,
-        ).get();
+  async store(data: UpsertCitiesDto): Promise<CitiesDto> {
+    const existingCountry = await this.citiesModel.findOne({
+      name: data.name,
+      country_id: data.country_id,
+    });
+
+    if (existingCountry) {
+      throw new BadRequestException('City Already Exists');
     }
 
-    async store(data: UpdateOrStoreCityDto): Promise<CitiesDto> {
-        const existingCountry = await this.citiesModel.findOne({
-            name: data.name,
-            country_id: data.country_id
-        });
+    const newCity = await this.citiesModel.create(data);
 
-        if (existingCountry) {
-            throw new BadRequestException('City Already Exists');
-        }
+    return plainToInstance(CitiesDto, newCity);
+  }
 
-        const newCity = await this.citiesModel.create(data);
+  async show(id: string): Promise<CitiesDto> {
+    const existingCountry = await this.citiesModel
+      .findById(id)
+      .populate('country');
 
-        return plainToInstance(CitiesDto, newCity);
+    if (!existingCountry) {
+      throw new BadRequestException('City Not Found');
     }
 
-    async show(id: string): Promise<CitiesDto> {
-        const existingCountry = await this.citiesModel.findById(id).populate('country');
+    return plainToInstance(CitiesDto, existingCountry);
+  }
 
-        if (!existingCountry) {
-            throw new BadRequestException('City Not Found');
-        }
+  async update(id: string, data: UpsertCitiesDto): Promise<CitiesDto> {
+    const existingCountry = await this.citiesModel.findById(id);
 
-        return plainToInstance(CitiesDto, existingCountry);
+    if (!existingCountry) {
+      throw new BadRequestException('City Not Found');
     }
 
-    async update(id: string, data: UpdateOrStoreCityDto): Promise<CitiesDto> {
-        const existingCountry = await this.citiesModel.findById(id);
+    const City = await this.citiesModel.findByIdAndUpdate(
+      id,
+      { $set: data },
+      { new: true },
+    );
 
-        if (!existingCountry) {
-            throw new BadRequestException('City Not Found');
-        }
+    return plainToInstance(CitiesDto, City);
+  }
 
-        const City = await this.citiesModel.findByIdAndUpdate(
-            id,
-            { $set: data },
-            { new: true },
-        );
+  async destroy(id: string): Promise<void> {
+    const existingCountry = await this.citiesModel.findById(id);
 
-        return plainToInstance(CitiesDto, City);
+    if (!existingCountry) {
+      throw new BadRequestException('City Not Found');
     }
 
-    async destroy(id: string): Promise<void> {
-        const existingCountry = await this.citiesModel.findById(id);
-
-        if (!existingCountry) {
-            throw new BadRequestException('City Not Found');
-        }
-
-        await this.citiesModel.findByIdAndUpdate(
-            id,
-            {
-                $set: {
-                    deleted_at: Date.now()
-                }
-            },
-        );
-    }
+    await this.citiesModel.findByIdAndUpdate(id, {
+      $set: {
+        deleted_at: Date.now(),
+      },
+    });
+  }
 }

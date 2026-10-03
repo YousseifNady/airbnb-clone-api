@@ -15,6 +15,8 @@ import { SystemAdimnsModule } from './system-adimns/system-adimns.module';
 import { AppSettingsModule } from './app-settings/app-settings.module';
 import { CurrenciesModule } from './currencies/currencies.module';
 import { UnitCategoriesModule } from './unit-categories/unit-categories.module';
+import { UnitsModule } from './units/units.module';
+import { FilesystemModule } from './filesystem/filesystem.module';
 
 @Module({
   imports: [
@@ -28,6 +30,8 @@ import { UnitCategoriesModule } from './unit-categories/unit-categories.module';
     AppSettingsModule,
     CurrenciesModule,
     UnitCategoriesModule,
+    UnitsModule,
+    FilesystemModule,
   ],
   controllers: [],
   providers: [
@@ -48,4 +52,4 @@ import { UnitCategoriesModule } from './unit-categories/unit-categories.module';
     },
   ],
 })
-export class AppModule { }
+export class AppModule {}

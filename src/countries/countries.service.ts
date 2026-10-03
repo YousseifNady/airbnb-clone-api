@@ -5,86 +5,78 @@ import { InjectModel } from '@nestjs/mongoose';
 import { plainToInstance } from 'class-transformer';
 import { CountriesDto } from './dtos/countries.dto';
 import { BadRequestException } from '../common/exceptions/bad-request.exception';
-import { UpsertCountryDto } from './dtos/upsert-country.dto';
-import { GetCountryDto } from './dtos/get-country.dto';
-import { Pagination } from '../common/helpers/pagination.dto';
+import { UpsertCountriesDto } from './dtos/upsert-countries.dto';
+import { FindAllCountriesDto } from './dtos/find-all-countries.dto';
+import { Pagination } from '../common/helpers/pagination.helper';
 import { CountryFilter } from './filters/countries.filter';
 
 @Injectable()
 export class CountriesService {
-    constructor(
-        @InjectModel(Country.name)
-        private readonly countriesModel: Model<Country>
-    ) { }
+  constructor(
+    @InjectModel(Country.name)
+    private readonly countriesModel: Model<Country>,
+  ) {}
 
-    async getAll(data: GetCountryDto) {
-        const filter = CountryFilter.build(data);
+  async findAll(data: FindAllCountriesDto) {
+    const filter = CountryFilter.build(data);
 
-        const query = this.countriesModel.find(filter);
+    const query = this.countriesModel.find(filter);
 
-        return new Pagination(
-            query,
-            CountriesDto,
-            data.page,
-            data.limit,
-        ).get();
+    return new Pagination(query, CountriesDto, data.page, data.limit).get();
+  }
+
+  async store(data: UpsertCountriesDto): Promise<CountriesDto> {
+    const existingCountry = await this.countriesModel.findOne({
+      name: data.name,
+      country_code: data.country_code,
+    });
+
+    if (existingCountry) {
+      throw new BadRequestException('Country Already Exists');
     }
 
-    async store(data: UpsertCountryDto): Promise<CountriesDto> {
-        const existingCountry = await this.countriesModel.findOne({
-            name: data.name,
-            country_code: data.country_code
-        });
+    const newCountry = await this.countriesModel.create(data);
 
-        if (existingCountry) {
-            throw new BadRequestException('Country Already Exists');
-        }
+    return plainToInstance(CountriesDto, newCountry);
+  }
 
-        const newCountry = await this.countriesModel.create(data);
+  async show(id: string): Promise<CountriesDto> {
+    const existingCountry = await this.countriesModel.findById(id);
 
-        return plainToInstance(CountriesDto, newCountry);
+    if (!existingCountry) {
+      throw new BadRequestException('Country Not Found');
     }
 
-    async show(id: string): Promise<CountriesDto> {
-        const existingCountry = await this.countriesModel.findById(id);
+    return plainToInstance(CountriesDto, existingCountry);
+  }
 
-        if (!existingCountry) {
-            throw new BadRequestException('Country Not Found');
-        }
+  async update(id: string, data: UpsertCountriesDto): Promise<CountriesDto> {
+    const existingCountry = await this.countriesModel.findById(id);
 
-        return plainToInstance(CountriesDto, existingCountry);
+    if (!existingCountry) {
+      throw new BadRequestException('Country Not Found');
     }
 
-    async update(id: string, data: UpsertCountryDto): Promise<CountriesDto> {
-        const existingCountry = await this.countriesModel.findById(id);
+    const country = await this.countriesModel.findByIdAndUpdate(
+      id,
+      { $set: data },
+      { new: true },
+    );
 
-        if (!existingCountry) {
-            throw new BadRequestException('Country Not Found');
-        }
+    return plainToInstance(CountriesDto, country);
+  }
 
-        const country = await this.countriesModel.findByIdAndUpdate(
-            id,
-            { $set: data },
-            { new: true },
-        );
+  async destroy(id: string): Promise<void> {
+    const existingCountry = await this.countriesModel.findById(id);
 
-        return plainToInstance(CountriesDto, country);
+    if (!existingCountry) {
+      throw new BadRequestException('Country Not Found');
     }
 
-    async destroy(id: string): Promise<void> {
-        const existingCountry = await this.countriesModel.findById(id);
-
-        if (!existingCountry) {
-            throw new BadRequestException('Country Not Found');
-        }
-
-        await this.countriesModel.findByIdAndUpdate(
-            id,
-            {
-                $set: {
-                    deleted_at: Date.now()
-                }
-            },
-        );
-    }
+    await this.countriesModel.findByIdAndUpdate(id, {
+      $set: {
+        deleted_at: Date.now(),
+      },
+    });
+  }
 }

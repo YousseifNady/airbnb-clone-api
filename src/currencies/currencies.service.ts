@@ -3,88 +3,80 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Currency } from './schema/currencies.schema';
 import { Model } from 'mongoose';
 import { CurrenciesDto } from './dtos/currencies.dto';
-import { Pagination } from '../common/helpers/pagination.dto';
+import { Pagination } from '../common/helpers/pagination.helper';
 import { CurrencyFilter } from './filters/currencies.filter';
-import { GetCurrencyDto } from './dtos/get-currency.dto';
-import { UpsertCurrenciesDto } from './dtos/upsert-currency.dto';
+import { FindAllCurrenciesDto } from './dtos/find-all-currencies.dto';
+import { UpsertCurrenciesDto } from './dtos/upsert-currencies.dto';
 import { BadRequestException } from '../common/exceptions/bad-request.exception';
 import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class CurrenciesService {
-    constructor(
-        @InjectModel(Currency.name)
-        private readonly currenciesModel: Model<Currency>
-    ) { }
+  constructor(
+    @InjectModel(Currency.name)
+    private readonly currenciesModel: Model<Currency>,
+  ) {}
 
-    async getAll(data: GetCurrencyDto) {
-        const filter = CurrencyFilter.build(data);
+  async findAll(data: FindAllCurrenciesDto) {
+    const filter = CurrencyFilter.build(data);
 
-        const query = this.currenciesModel.find(filter);
+    const query = this.currenciesModel.find(filter);
 
-        return new Pagination(
-            query,
-            CurrenciesDto,
-            data.page,
-            data.limit,
-        ).get();
+    return new Pagination(query, CurrenciesDto, data.page, data.limit).get();
+  }
+
+  async store(data: UpsertCurrenciesDto): Promise<CurrenciesDto> {
+    const existingCurrency = await this.currenciesModel.findOne({
+      name: data.name,
+      currency_code: data.currency_code,
+    });
+
+    if (existingCurrency) {
+      throw new BadRequestException('Currency Already Exists');
     }
 
-    async store(data: UpsertCurrenciesDto): Promise<CurrenciesDto> {
-        const existingCurrency = await this.currenciesModel.findOne({
-            name: data.name,
-            currency_code: data.currency_code
-        });
+    const newCurrency = await this.currenciesModel.create(data);
 
-        if (existingCurrency) {
-            throw new BadRequestException('Currency Already Exists');
-        }
+    return plainToInstance(CurrenciesDto, newCurrency);
+  }
 
-        const newCurrency = await this.currenciesModel.create(data);
+  async show(id: string): Promise<CurrenciesDto> {
+    const existingCurrency = await this.currenciesModel.findById(id);
 
-        return plainToInstance(CurrenciesDto, newCurrency);
+    if (!existingCurrency) {
+      throw new BadRequestException('Currency Not Found');
     }
 
-    async show(id: string): Promise<CurrenciesDto> {
-        const existingCurrency = await this.currenciesModel.findById(id);
+    return plainToInstance(CurrenciesDto, existingCurrency);
+  }
 
-        if (!existingCurrency) {
-            throw new BadRequestException('Currency Not Found');
-        }
+  async update(id: string, data: UpsertCurrenciesDto): Promise<CurrenciesDto> {
+    const existingCurrency = await this.currenciesModel.findById(id);
 
-        return plainToInstance(CurrenciesDto, existingCurrency);
+    if (!existingCurrency) {
+      throw new BadRequestException('Currency Not Found');
     }
 
-    async update(id: string, data: UpsertCurrenciesDto): Promise<CurrenciesDto> {
-        const existingCurrency = await this.currenciesModel.findById(id);
+    const currency = await this.currenciesModel.findByIdAndUpdate(
+      id,
+      { $set: data },
+      { new: true },
+    );
 
-        if (!existingCurrency) {
-            throw new BadRequestException('Currency Not Found');
-        }
+    return plainToInstance(CurrenciesDto, currency);
+  }
 
-        const currency = await this.currenciesModel.findByIdAndUpdate(
-            id,
-            { $set: data },
-            { new: true },
-        );
+  async destroy(id: string): Promise<void> {
+    const existingCurrency = await this.currenciesModel.findById(id);
 
-        return plainToInstance(CurrenciesDto, currency);
+    if (!existingCurrency) {
+      throw new BadRequestException('Currency Not Found');
     }
 
-    async destroy(id: string): Promise<void> {
-        const existingCurrency = await this.currenciesModel.findById(id);
-
-        if (!existingCurrency) {
-            throw new BadRequestException('Currency Not Found');
-        }
-
-        await this.currenciesModel.findByIdAndUpdate(
-            id,
-            {
-                $set: {
-                    deleted_at: Date.now()
-                }
-            },
-        );
-    }
+    await this.currenciesModel.findByIdAndUpdate(id, {
+      $set: {
+        deleted_at: Date.now(),
+      },
+    });
+  }
 }
