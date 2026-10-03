@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { UnitCategoriesService } from './unit-categories.service';
 import { Public } from '../auth/decorators/public.decorator';
 import { AuthGuard } from '../auth/guards/auth.guard';
@@ -11,33 +21,31 @@ import { UpsertUnitCategoriesDto } from './dtos/upsert-unit-categories.dto';
 @UseGuards(AuthGuard)
 @Role(Roles.SYSTEM_ADMIN)
 export class UnitCategoriesController {
-    constructor(
-        private readonly unitCategoriesService: UnitCategoriesService
-    ) { }
+  constructor(private readonly unitCategoriesService: UnitCategoriesService) {}
 
-    @Get('/')
-    @Public()
-    findAll(@Query() queryParams: FindAllUnitCategoriesDto) {
-        return this.unitCategoriesService.findAll(queryParams);
-    }
+  @Get('/')
+  @Public()
+  findAll(@Query() queryParams: FindAllUnitCategoriesDto) {
+    return this.unitCategoriesService.findAll(queryParams);
+  }
 
-    @Post('/')
-    store(@Body() data: UpsertUnitCategoriesDto) {
-        return this.unitCategoriesService.store(data);
-    }
+  @Post('/')
+  store(@Body() data: UpsertUnitCategoriesDto) {
+    return this.unitCategoriesService.store(data);
+  }
 
-    @Get('/:id')
-    show(@Param() id: string) {
-        return this.unitCategoriesService.show(id);
-    }
+  @Get('/:id')
+  show(@Param() id: string) {
+    return this.unitCategoriesService.show(id);
+  }
 
-    @Put('/:id')
-    update(@Param() id: string, @Body() data: UpsertUnitCategoriesDto) {
-        return this.unitCategoriesService.update(id, data);
-    }
+  @Put('/:id')
+  update(@Param() id: string, @Body() data: UpsertUnitCategoriesDto) {
+    return this.unitCategoriesService.update(id, data);
+  }
 
-    @Delete('/:id')
-    destroy(@Param() id: string) {
-        return this.unitCategoriesService.destroy(id);
-    }
+  @Delete('/:id')
+  destroy(@Param() id: string) {
+    return this.unitCategoriesService.destroy(id);
+  }
 }

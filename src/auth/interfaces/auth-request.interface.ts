@@ -1,5 +1,5 @@
-import { SystemAdminDto } from "../../system-adimns/dtos/system-admins.dto";
-import { UserDto } from "../../users/dtos/user.dto";
+import { SystemAdminDto } from '../../system-adimns/dtos/system-admins.dto';
+import { UserDto } from '../../users/dtos/user.dto';
 import { Request } from 'express';
 
 export interface AuthenticatedRequest extends Request {

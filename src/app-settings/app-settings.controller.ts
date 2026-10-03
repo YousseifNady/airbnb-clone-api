@@ -10,19 +10,17 @@ import { Roles } from '../common/enums/role.enum';
 @UseGuards(AuthGuard)
 @Role(Roles.SYSTEM_ADMIN)
 export class AppSettingsController {
-    constructor(
-        private readonly appSettingsService: AppSettingsService
-    ) {}
+  constructor(private readonly appSettingsService: AppSettingsService) {}
 
-    @Get()
-    findAll(): Promise<AppSettingsDto|null> {
-        return this.appSettingsService.findAll();
-    }
+  @Get()
+  findAll(): Promise<AppSettingsDto | null> {
+    return this.appSettingsService.findAll();
+  }
 
-    @Put()
-    upsertAppSettings(
-        @Body() body: UpsertAppSettingDto 
-    ): Promise<AppSettingsDto> {
-        return this.appSettingsService.upsert(body);
-    }
+  @Put()
+  upsertAppSettings(
+    @Body() body: UpsertAppSettingDto,
+  ): Promise<AppSettingsDto> {
+    return this.appSettingsService.upsert(body);
+  }
 }

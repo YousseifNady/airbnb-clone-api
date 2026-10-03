@@ -52,4 +52,4 @@ import { FilesystemModule } from './filesystem/filesystem.module';
     },
   ],
 })
-export class AppModule { }
+export class AppModule {}

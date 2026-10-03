@@ -7,46 +7,29 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class FileStorageDriver implements IStorageDriver {
-    private readonly root = 'storage';
+  private readonly root = 'storage';
 
-    async upload(
-        file: IStorageFile,
-        directory: string,
-    ): Promise<string> {
-        const extension = extname(file.filename);
+  async upload(file: IStorageFile, directory: string): Promise<string> {
+    const extension = extname(file.filename);
 
-        const filename = `${randomUUID()}${extension}`;
+    const filename = `${randomUUID()}${extension}`;
 
-        const relativePath = join(
-            directory,
-            filename,
-        );
+    const relativePath = join(directory, filename);
 
-        const fullPath = join(
-            this.root,
-            relativePath,
-        );
+    const fullPath = join(this.root, relativePath);
 
-        await mkdir(
-            join(this.root, directory),
-            { recursive: true },
-        );
+    await mkdir(join(this.root, directory), { recursive: true });
 
-        await writeFile(
-            fullPath,
-            file.buffer,
-        );
+    await writeFile(fullPath, file.buffer);
 
-        return relativePath;
-    }
+    return relativePath;
+  }
 
-    async delete(path: string): Promise<void> {
-        await unlink(
-            join(this.root, path),
-        );
-    }
+  async delete(path: string): Promise<void> {
+    await unlink(join(this.root, path));
+  }
 
-    url(path: string): string {
-        return `/${this.root}/${path}`;
-    }
+  url(path: string): string {
+    return `/${this.root}/${path}`;
+  }
 }

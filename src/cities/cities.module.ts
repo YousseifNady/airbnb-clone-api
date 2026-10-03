@@ -14,6 +14,6 @@ import { City, CitySchema } from './schema/cities.schema';
     ]),
   ],
   controllers: [CitiesController],
-  providers: [CitiesService]
+  providers: [CitiesService],
 })
-export class CitiesModule { }
+export class CitiesModule {}

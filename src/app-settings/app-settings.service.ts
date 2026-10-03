@@ -8,22 +8,22 @@ import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class AppSettingsService {
-    constructor(
-        @InjectModel(AppSetting.name)
-        private readonly appSettingsModel: Model<AppSetting>
-    ) {}
+  constructor(
+    @InjectModel(AppSetting.name)
+    private readonly appSettingsModel: Model<AppSetting>,
+  ) {}
 
-    async findAll(): Promise<AppSettingsDto|null> {
-        return await this.appSettingsModel.findOne();
-    }
+  async findAll(): Promise<AppSettingsDto | null> {
+    return await this.appSettingsModel.findOne();
+  }
 
-    async upsert(data: UpsertAppSettingDto): Promise<AppSettingsDto> {
-        const appSettings = await this.appSettingsModel.findOneAndUpdate(
-            {},
-            { $set: data },
-            { upsert: true, returnDocument: 'after', lean: true }
-        );
+  async upsert(data: UpsertAppSettingDto): Promise<AppSettingsDto> {
+    const appSettings = await this.appSettingsModel.findOneAndUpdate(
+      {},
+      { $set: data },
+      { upsert: true, returnDocument: 'after', lean: true },
+    );
 
-        return plainToInstance(AppSettingsDto, appSettings);
-    }
+    return plainToInstance(AppSettingsDto, appSettings);
+  }
 }

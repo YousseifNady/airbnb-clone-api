@@ -12,78 +12,73 @@ import { UnitCategoryFilter } from './filters/unit-categories.filter';
 
 @Injectable()
 export class UnitCategoriesService {
-    constructor(
-        @InjectModel(UnitCategory.name)
-        private readonly unitCategoryModel: Model<UnitCategory>
-    ) { }
+  constructor(
+    @InjectModel(UnitCategory.name)
+    private readonly unitCategoryModel: Model<UnitCategory>,
+  ) {}
 
-    async findAll(data: FindAllUnitCategoriesDto) {
-        const filter = UnitCategoryFilter.build(data);
+  async findAll(data: FindAllUnitCategoriesDto) {
+    const filter = UnitCategoryFilter.build(data);
 
-        const query = this.unitCategoryModel.find(filter);
+    const query = this.unitCategoryModel.find(filter);
 
-        return new Pagination(
-            query,
-            UnitCategoryDto,
-            data.page,
-            data.limit,
-        ).get();
+    return new Pagination(query, UnitCategoryDto, data.page, data.limit).get();
+  }
+
+  async store(data: UpsertUnitCategoriesDto): Promise<UnitCategoryDto> {
+    const existingUnitCategory = await this.unitCategoryModel.findOne({
+      name: data.name,
+    });
+
+    if (existingUnitCategory) {
+      throw new BadRequestException('UnitCategory Already Exists');
     }
 
-    async store(data: UpsertUnitCategoriesDto): Promise<UnitCategoryDto> {
-        const existingUnitCategory = await this.unitCategoryModel.findOne({
-            name: data.name
-        });
+    const newUnitCategory = await this.unitCategoryModel.create(data);
 
-        if (existingUnitCategory) {
-            throw new BadRequestException('UnitCategory Already Exists');
-        }
+    return plainToInstance(UnitCategoryDto, newUnitCategory);
+  }
 
-        const newUnitCategory = await this.unitCategoryModel.create(data);
+  async show(id: string): Promise<UnitCategoryDto> {
+    const existingUnitCategory = await this.unitCategoryModel.findById(id);
 
-        return plainToInstance(UnitCategoryDto, newUnitCategory);
+    if (!existingUnitCategory) {
+      throw new BadRequestException('UnitCategory Not Found');
     }
 
-    async show(id: string): Promise<UnitCategoryDto> {
-        const existingUnitCategory = await this.unitCategoryModel.findById(id);
+    return plainToInstance(UnitCategoryDto, existingUnitCategory);
+  }
 
-        if (!existingUnitCategory) {
-            throw new BadRequestException('UnitCategory Not Found');
-        }
+  async update(
+    id: string,
+    data: UpsertUnitCategoriesDto,
+  ): Promise<UnitCategoryDto> {
+    const existingUnitCategory = await this.unitCategoryModel.findById(id);
 
-        return plainToInstance(UnitCategoryDto, existingUnitCategory);
+    if (!existingUnitCategory) {
+      throw new BadRequestException('UnitCategory Not Found');
     }
 
-    async update(id: string, data: UpsertUnitCategoriesDto): Promise<UnitCategoryDto> {
-        const existingUnitCategory = await this.unitCategoryModel.findById(id);
+    const UnitCategory = await this.unitCategoryModel.findByIdAndUpdate(
+      id,
+      { $set: data },
+      { new: true },
+    );
 
-        if (!existingUnitCategory) {
-            throw new BadRequestException('UnitCategory Not Found');
-        }
+    return plainToInstance(UnitCategoryDto, UnitCategory);
+  }
 
-        const UnitCategory = await this.unitCategoryModel.findByIdAndUpdate(
-            id,
-            { $set: data },
-            { new: true },
-        );
+  async destroy(id: string): Promise<void> {
+    const existingUnitCategory = await this.unitCategoryModel.findById(id);
 
-        return plainToInstance(UnitCategoryDto, UnitCategory);
+    if (!existingUnitCategory) {
+      throw new BadRequestException('UnitCategory Not Found');
     }
 
-    async destroy(id: string): Promise<void> {
-        const existingUnitCategory = await this.unitCategoryModel.findById(id);
-
-        if (!existingUnitCategory) {
-            throw new BadRequestException('UnitCategory Not Found');
-        }
-
-        await this.unitCategoryModel.findByIdAndUpdate(
-            id,
-            {
-                $set: {
-                    deleted_at: Date.now()
-                }
-            },
-        );
-    }
+    await this.unitCategoryModel.findByIdAndUpdate(id, {
+      $set: {
+        deleted_at: Date.now(),
+      },
+    });
+  }
 }

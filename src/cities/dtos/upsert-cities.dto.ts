@@ -1,11 +1,11 @@
-import { IsMongoId, IsNotEmpty, IsString } from "class-validator";
+import { IsMongoId, IsNotEmpty, IsString } from 'class-validator';
 
 export class UpsertCitiesDto {
-    @IsNotEmpty()
-    @IsString()
-    name!: string;
+  @IsNotEmpty()
+  @IsString()
+  name!: string;
 
-    @IsNotEmpty()
-    @IsMongoId()
-    country_id!: string;
+  @IsNotEmpty()
+  @IsMongoId()
+  country_id!: string;
 }

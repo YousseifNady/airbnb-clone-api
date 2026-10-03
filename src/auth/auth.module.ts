@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -11,9 +11,12 @@ import {
   RefreshToken,
   RefreshTokenSchema,
 } from './schemas/refresh-token.schema';
+import { SystemAdimnsModule } from '../system-adimns/system-adimns.module';
 
+@Global()
 @Module({
   imports: [
+    SystemAdimnsModule,
     UsersModule,
 
     MongooseModule.forFeature([
@@ -27,8 +30,7 @@ import {
       useFactory: (configService: ConfigService) => ({
         secret: configService.getOrThrow<string>('JWT_SECRET'),
         signOptions: {
-          expiresIn:
-            configService.getOrThrow<StringValue>('JWT_EXPIRES_IN'),
+          expiresIn: configService.getOrThrow<StringValue>('JWT_EXPIRES_IN'),
         },
       }),
       inject: [ConfigService],
@@ -36,5 +38,6 @@ import {
   ],
   controllers: [AuthController],
   providers: [AuthService],
+  exports: [AuthService],
 })
 export class AuthModule {}

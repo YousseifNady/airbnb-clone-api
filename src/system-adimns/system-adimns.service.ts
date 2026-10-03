@@ -10,65 +10,65 @@ import { LoginDto } from '../auth/dtos/login.dto';
 
 @Injectable()
 export class SystemAdimnsService implements OnModuleInit {
-    constructor(
-        @InjectModel(SystemAdmin.name)
-        private readonly systemAdminModel: Model<SystemAdmin>,
-        private readonly configService: ConfigService
-    ) { }
+  constructor(
+    @InjectModel(SystemAdmin.name)
+    private readonly systemAdminModel: Model<SystemAdmin>,
+    private readonly configService: ConfigService,
+  ) {}
 
-    onModuleInit() {
-        this.initStstemAdmin();
+  onModuleInit() {
+    this.initStstemAdmin();
+  }
+
+  async initStstemAdmin() {
+    const systemAdminPassword = this.configService.getOrThrow<string>(
+      'SYSTEM_ADMIN_PASSWORD',
+    );
+    const hashedPassword = await bcrypt.hash(systemAdminPassword, 10);
+
+    const email = this.configService.getOrThrow<string>('SYSTEM_ADMIN_EMAIL');
+
+    const existsSystemAdmin = await this.systemAdminModel.findOne({ email });
+    if (existsSystemAdmin) {
+      return;
     }
 
-    async initStstemAdmin() {
-        const systemAdminPassword = this.configService.getOrThrow<string>('SYSTEM_ADMIN_PASSWORD');
-        const hashedPassword = await bcrypt.hash(systemAdminPassword, 10);
+    this.systemAdminModel.create({
+      name: this.configService.getOrThrow<string>('SYSTEM_ADMIN_NAME'),
+      email: email,
+      password: hashedPassword,
+      is_super_admin: true,
+    });
+  }
 
-        const email = this.configService.getOrThrow<string>('SYSTEM_ADMIN_EMAIL');
+  async checkCredentials(data: LoginDto): Promise<SystemAdminDto> {
+    const existingUser = await this.systemAdminModel.findOne({
+      email: data.email,
+    });
 
-        const existsSystemAdmin = await this.systemAdminModel.findOne({ email });
-        if (existsSystemAdmin) {
-            return;
-        }
-
-        this.systemAdminModel.create({
-            name: this.configService.getOrThrow<string>('SYSTEM_ADMIN_NAME'),
-            email: email,
-            password: hashedPassword,
-            is_super_admin: true
-        });
+    if (!existingUser) {
+      throw new BadRequestException('Invalid email or password');
     }
 
-    async checkCredentials(data: LoginDto): Promise<SystemAdminDto> {
-        const existingUser = await this.systemAdminModel.findOne({
-            email: data.email,
-        });
+    const isPasswordValid = await bcrypt.compare(
+      data.password,
+      existingUser.password,
+    );
 
-        if (!existingUser) {
-            throw new BadRequestException('Invalid email or password');
-        }
-
-        const isPasswordValid = await bcrypt.compare(
-            data.password,
-            existingUser.password,
-        );
-
-        if (!isPasswordValid) {
-            throw new BadRequestException('Invalid email or password');
-        }
-
-        return plainToInstance(SystemAdminDto, existingUser.toObject());
+    if (!isPasswordValid) {
+      throw new BadRequestException('Invalid email or password');
     }
 
+    return plainToInstance(SystemAdminDto, existingUser.toObject());
+  }
 
-    
-    async findById(id: string) {
+  async findById(id: string) {
     const existingSystemAdmin = await this.systemAdminModel.findById(id);
 
     if (!existingSystemAdmin) {
-        throw new BadRequestException('System Admin not found');
+      throw new BadRequestException('System Admin not found');
     }
-    
+
     return plainToInstance(SystemAdminDto, existingSystemAdmin.toObject());
-    }
+  }
 }

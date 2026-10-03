@@ -12,79 +12,71 @@ import { CountryFilter } from './filters/countries.filter';
 
 @Injectable()
 export class CountriesService {
-    constructor(
-        @InjectModel(Country.name)
-        private readonly countriesModel: Model<Country>
-    ) { }
+  constructor(
+    @InjectModel(Country.name)
+    private readonly countriesModel: Model<Country>,
+  ) {}
 
-    async findAll(data: FindAllCountriesDto) {
-        const filter = CountryFilter.build(data);
+  async findAll(data: FindAllCountriesDto) {
+    const filter = CountryFilter.build(data);
 
-        const query = this.countriesModel.find(filter);
+    const query = this.countriesModel.find(filter);
 
-        return new Pagination(
-            query,
-            CountriesDto,
-            data.page,
-            data.limit,
-        ).get();
+    return new Pagination(query, CountriesDto, data.page, data.limit).get();
+  }
+
+  async store(data: UpsertCountriesDto): Promise<CountriesDto> {
+    const existingCountry = await this.countriesModel.findOne({
+      name: data.name,
+      country_code: data.country_code,
+    });
+
+    if (existingCountry) {
+      throw new BadRequestException('Country Already Exists');
     }
 
-    async store(data: UpsertCountriesDto): Promise<CountriesDto> {
-        const existingCountry = await this.countriesModel.findOne({
-            name: data.name,
-            country_code: data.country_code
-        });
+    const newCountry = await this.countriesModel.create(data);
 
-        if (existingCountry) {
-            throw new BadRequestException('Country Already Exists');
-        }
+    return plainToInstance(CountriesDto, newCountry);
+  }
 
-        const newCountry = await this.countriesModel.create(data);
+  async show(id: string): Promise<CountriesDto> {
+    const existingCountry = await this.countriesModel.findById(id);
 
-        return plainToInstance(CountriesDto, newCountry);
+    if (!existingCountry) {
+      throw new BadRequestException('Country Not Found');
     }
 
-    async show(id: string): Promise<CountriesDto> {
-        const existingCountry = await this.countriesModel.findById(id);
+    return plainToInstance(CountriesDto, existingCountry);
+  }
 
-        if (!existingCountry) {
-            throw new BadRequestException('Country Not Found');
-        }
+  async update(id: string, data: UpsertCountriesDto): Promise<CountriesDto> {
+    const existingCountry = await this.countriesModel.findById(id);
 
-        return plainToInstance(CountriesDto, existingCountry);
+    if (!existingCountry) {
+      throw new BadRequestException('Country Not Found');
     }
 
-    async update(id: string, data: UpsertCountriesDto): Promise<CountriesDto> {
-        const existingCountry = await this.countriesModel.findById(id);
+    const country = await this.countriesModel.findByIdAndUpdate(
+      id,
+      { $set: data },
+      { new: true },
+    );
 
-        if (!existingCountry) {
-            throw new BadRequestException('Country Not Found');
-        }
+    return plainToInstance(CountriesDto, country);
+  }
 
-        const country = await this.countriesModel.findByIdAndUpdate(
-            id,
-            { $set: data },
-            { new: true },
-        );
+  async destroy(id: string): Promise<void> {
+    const existingCountry = await this.countriesModel.findById(id);
 
-        return plainToInstance(CountriesDto, country);
+    if (!existingCountry) {
+      throw new BadRequestException('Country Not Found');
     }
 
-    async destroy(id: string): Promise<void> {
-        const existingCountry = await this.countriesModel.findById(id);
-
-        if (!existingCountry) {
-            throw new BadRequestException('Country Not Found');
-        }
-
-        await this.countriesModel.findByIdAndUpdate(
-            id,
-            {
-                $set: {
-                    deleted_at: Date.now()
-                }
-            },
-        );
-    }
+    await this.countriesModel.findByIdAndUpdate(id, {
+      $set: {
+        deleted_at: Date.now(),
+      },
+    });
+  }
 }

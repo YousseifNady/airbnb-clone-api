@@ -12,15 +12,14 @@ import { PaginationInterface } from '../interfaces/pagination.interface';
 @Injectable()
 export class ResponseInterceptor<T> implements NestInterceptor<T, any> {
   intercept(context: ExecutionContext, next: CallHandler<T>): Observable<any> {
-
     return next.handle().pipe(
       map((result) => {
-        const response = result as T &
-          Partial<PaginationInterface<unknown>>;
+        const response = result as T & Partial<PaginationInterface<unknown>>;
 
-        const isPaginatedResponse = response &&
+        const isPaginatedResponse =
+          response &&
           response.data !== undefined &&
-          response.meta !== undefined
+          response.meta !== undefined;
 
         if (isPaginatedResponse) {
           return {
