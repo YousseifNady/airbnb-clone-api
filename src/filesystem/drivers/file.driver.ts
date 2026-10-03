@@ -26,7 +26,13 @@ export class FileStorageDriver implements IStorageDriver {
   }
 
   async delete(path: string): Promise<void> {
-    await unlink(join(this.root, path));
+    try {
+      await unlink(join(this.root, path));
+    } catch (error: any) {
+      if (error.code !== 'ENOENT') {
+        throw error;
+      }
+    }
   }
 
   url(path: string): string {

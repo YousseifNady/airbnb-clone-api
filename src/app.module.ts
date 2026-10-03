@@ -11,7 +11,7 @@ import { getValidationPipeConfig } from './common/config/validation-pipe.config'
 import { APP_FILTER, APP_PIPE, APP_INTERCEPTOR } from '@nestjs/core';
 import { CountriesModule } from './countries/countries.module';
 import { CitiesModule } from './cities/cities.module';
-import { SystemAdimnsModule } from './system-adimns/system-adimns.module';
+import { SystemAdminsModule } from './system-admins/system-admins.module';
 import { AppSettingsModule } from './app-settings/app-settings.module';
 import { CurrenciesModule } from './currencies/currencies.module';
 import { UnitCategoriesModule } from './unit-categories/unit-categories.module';
@@ -26,7 +26,7 @@ import { FilesystemModule } from './filesystem/filesystem.module';
     AuthModule,
     CountriesModule,
     CitiesModule,
-    SystemAdimnsModule,
+    SystemAdminsModule,
     AppSettingsModule,
     CurrenciesModule,
     UnitCategoriesModule,

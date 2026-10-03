@@ -1,11 +1,14 @@
-import { IsNumber, IsOptional } from 'class-validator';
+import { IsNumber, IsOptional, Min, Max } from 'class-validator';
 
 export class UpsertAppSettingDto {
   @IsOptional()
   @IsNumber()
-  vat_rate!: string;
+  @Min(0)
+  @Max(25)
+  vat_rate!: number;
 
   @IsOptional()
   @IsNumber()
-  min_price!: string;
+  @Min(0)
+  min_price!: number;
 }

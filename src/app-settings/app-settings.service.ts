@@ -14,7 +14,8 @@ export class AppSettingsService {
   ) {}
 
   async findAll(): Promise<AppSettingsDto | null> {
-    return await this.appSettingsModel.findOne();
+    const appSettings = await this.appSettingsModel.findOne().lean();
+    return appSettings ? plainToInstance(AppSettingsDto, appSettings) : null;
   }
 
   async upsert(data: UpsertAppSettingDto): Promise<AppSettingsDto> {

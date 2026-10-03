@@ -3,6 +3,7 @@ import { CitiesController } from './cities.controller';
 import { CitiesService } from './cities.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { City, CitySchema } from './schema/cities.schema';
+import { CountriesModule } from '../countries/countries.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { City, CitySchema } from './schema/cities.schema';
         schema: CitySchema,
       },
     ]),
+    CountriesModule,
   ],
   controllers: [CitiesController],
   providers: [CitiesService],

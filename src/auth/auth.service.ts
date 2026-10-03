@@ -13,16 +13,16 @@ import { ForbiddenException } from '../common/exceptions/forbidden.exception';
 import { RefreshToken } from './schemas/refresh-token.schema';
 import { LoginDto } from './dtos/login.dto';
 import { Roles } from '../common/enums/role.enum';
-import { SystemAdimnsService } from '../system-adimns/system-adimns.service';
+import { SystemAdminsService } from '../system-admins/system-admins.service';
 import { UnAuthorizedException } from '../common/exceptions/unauthorized.exception';
 import { UserDto } from '../users/dtos/user.dto';
-import { SystemAdminDto } from '../system-adimns/dtos/system-admins.dto';
+import { SystemAdminDto } from '../system-admins/dtos/system-admins.dto';
 import { AuthenticatedRequest } from './interfaces/auth-request.interface';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly systemAdminService: SystemAdimnsService,
+    private readonly systemAdminService: SystemAdminsService,
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
@@ -125,11 +125,11 @@ export class AuthService {
 
     const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
 
-    await this.refreshTokenModel.create({
-      principalId,
-      role,
-      refreshToken: hashedRefreshToken,
-    });
+    await this.refreshTokenModel.findOneAndUpdate(
+      { principalId },
+      { $set: { role, refreshToken: hashedRefreshToken } },
+      { upsert: true },
+    );
 
     return refreshToken;
   }

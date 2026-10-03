@@ -59,13 +59,24 @@ export class UnitCategoriesService {
       throw new BadRequestException('UnitCategory Not Found');
     }
 
-    const UnitCategory = await this.unitCategoryModel.findByIdAndUpdate(
+    if (data.name) {
+      const duplicateCategory = await this.unitCategoryModel.findOne({
+        _id: { $ne: id },
+        name: data.name,
+      });
+
+      if (duplicateCategory) {
+        throw new BadRequestException('Unit category name already exists');
+      }
+    }
+
+    const updatedUnitCategory = await this.unitCategoryModel.findByIdAndUpdate(
       id,
       { $set: data },
       { new: true },
     );
 
-    return plainToInstance(UnitCategoryDto, UnitCategory);
+    return plainToInstance(UnitCategoryDto, updatedUnitCategory);
   }
 
   async destroy(id: string): Promise<void> {

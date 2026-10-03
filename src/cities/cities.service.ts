@@ -8,12 +8,14 @@ import { FindAllCitiesDto } from './dtos/find-all-cities.dto';
 import { plainToInstance } from 'class-transformer';
 import { UpsertCitiesDto } from './dtos/upsert-cities.dto';
 import { CityFilter } from './filters/cities.filter';
+import { CountriesService } from '../countries/countries.service';
 
 @Injectable()
 export class CitiesService {
   constructor(
     @InjectModel(City.name)
     private readonly citiesModel: Model<City>,
+    private readonly countriesService: CountriesService,
   ) {}
 
   async findAll(data: FindAllCitiesDto) {
@@ -25,12 +27,14 @@ export class CitiesService {
   }
 
   async store(data: UpsertCitiesDto): Promise<CitiesDto> {
-    const existingCountry = await this.citiesModel.findOne({
+    await this.countriesService.show(data.country_id); // Validates country exists
+
+    const existingCity = await this.citiesModel.findOne({
       name: data.name,
       country_id: data.country_id,
     });
 
-    if (existingCountry) {
+    if (existingCity) {
       throw new BadRequestException('City Already Exists');
     }
 
@@ -40,37 +44,51 @@ export class CitiesService {
   }
 
   async show(id: string): Promise<CitiesDto> {
-    const existingCountry = await this.citiesModel
+    const existingCity = await this.citiesModel
       .findById(id)
       .populate('country');
 
-    if (!existingCountry) {
+    if (!existingCity) {
       throw new BadRequestException('City Not Found');
     }
 
-    return plainToInstance(CitiesDto, existingCountry);
+    return plainToInstance(CitiesDto, existingCity);
   }
 
   async update(id: string, data: UpsertCitiesDto): Promise<CitiesDto> {
-    const existingCountry = await this.citiesModel.findById(id);
+    const existingCity = await this.citiesModel.findById(id);
 
-    if (!existingCountry) {
+    if (!existingCity) {
       throw new BadRequestException('City Not Found');
     }
 
-    const City = await this.citiesModel.findByIdAndUpdate(
+    if (data.country_id && data.country_id !== existingCity.country_id.toString()) {
+      await this.countriesService.show(data.country_id);
+    }
+
+    const duplicateCity = await this.citiesModel.findOne({
+      _id: { $ne: id },
+      name: data.name,
+      country_id: data.country_id || existingCity.country_id,
+    });
+
+    if (duplicateCity) {
+      throw new BadRequestException('City Name Already Exists in this Country');
+    }
+
+    const updatedCity = await this.citiesModel.findByIdAndUpdate(
       id,
       { $set: data },
       { new: true },
     );
 
-    return plainToInstance(CitiesDto, City);
+    return plainToInstance(CitiesDto, updatedCity);
   }
 
   async destroy(id: string): Promise<void> {
-    const existingCountry = await this.citiesModel.findById(id);
+    const existingCity = await this.citiesModel.findById(id);
 
-    if (!existingCountry) {
+    if (!existingCity) {
       throw new BadRequestException('City Not Found');
     }
 

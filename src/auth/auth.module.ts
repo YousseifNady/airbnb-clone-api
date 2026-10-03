@@ -11,12 +11,12 @@ import {
   RefreshToken,
   RefreshTokenSchema,
 } from './schemas/refresh-token.schema';
-import { SystemAdimnsModule } from '../system-adimns/system-adimns.module';
+import { SystemAdminsModule } from '../system-admins/system-admins.module';
 
 @Global()
 @Module({
   imports: [
-    SystemAdimnsModule,
+    SystemAdminsModule,
     UsersModule,
 
     MongooseModule.forFeature([

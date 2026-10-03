@@ -9,18 +9,18 @@ import { SystemAdminDto } from './dtos/system-admins.dto';
 import { LoginDto } from '../auth/dtos/login.dto';
 
 @Injectable()
-export class SystemAdimnsService implements OnModuleInit {
+export class SystemAdminsService implements OnModuleInit {
   constructor(
     @InjectModel(SystemAdmin.name)
     private readonly systemAdminModel: Model<SystemAdmin>,
     private readonly configService: ConfigService,
   ) {}
 
-  onModuleInit() {
-    this.initStstemAdmin();
+  async onModuleInit() {
+    await this.initSystemAdmin();
   }
 
-  async initStstemAdmin() {
+  async initSystemAdmin() {
     const systemAdminPassword = this.configService.getOrThrow<string>(
       'SYSTEM_ADMIN_PASSWORD',
     );

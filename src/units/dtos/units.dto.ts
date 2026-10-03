@@ -1,4 +1,5 @@
-import { Expose, Type } from 'class-transformer';
+import { Expose, Type, Transform } from 'class-transformer';
+import { FilesystemService } from '../../filesystem/filesystem.service';
 
 export class UnitsDto {
   @Expose()
@@ -14,6 +15,11 @@ export class UnitsDto {
   address!: string;
 
   @Expose()
+  @Transform(({ value }) =>
+    Array.isArray(value)
+      ? value.map((p: string) => FilesystemService.getUrl(p))
+      : [],
+  )
   photos!: string[];
 
   @Expose()

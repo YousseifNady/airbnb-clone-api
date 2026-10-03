@@ -15,5 +15,6 @@ import { Country, CountrySchema } from './schema/countries.schema';
   ],
   controllers: [CountriesController],
   providers: [CountriesService],
+  exports: [CountriesService],
 })
 export class CountriesModule {}

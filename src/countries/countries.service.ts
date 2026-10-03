@@ -27,8 +27,7 @@ export class CountriesService {
 
   async store(data: UpsertCountriesDto): Promise<CountriesDto> {
     const existingCountry = await this.countriesModel.findOne({
-      name: data.name,
-      country_code: data.country_code,
+      $or: [{ name: data.name }, { country_code: data.country_code }],
     });
 
     if (existingCountry) {
@@ -55,6 +54,15 @@ export class CountriesService {
 
     if (!existingCountry) {
       throw new BadRequestException('Country Not Found');
+    }
+
+    const duplicateCountry = await this.countriesModel.findOne({
+      _id: { $ne: id },
+      $or: [{ name: data.name }, { country_code: data.country_code }],
+    });
+
+    if (duplicateCountry) {
+      throw new BadRequestException('Country Name or Code Already Exists');
     }
 
     const country = await this.countriesModel.findByIdAndUpdate(

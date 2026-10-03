@@ -8,9 +8,15 @@ import { IStorageFile } from './interfaces/file-storage.interface';
 @Injectable()
 export class FilesystemService {
   private readonly storageDriver: IStorageDriver;
+  private static instance: FilesystemService;
 
   constructor(private readonly configService: ConfigService) {
     this.storageDriver = this.initialize();
+    FilesystemService.instance = this;
+  }
+
+  static getUrl(path: string): string {
+    return FilesystemService.instance.url(path);
   }
 
   upload(file: IStorageFile, directory: string): Promise<string> {

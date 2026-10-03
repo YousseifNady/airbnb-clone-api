@@ -27,8 +27,7 @@ export class CurrenciesService {
 
   async store(data: UpsertCurrenciesDto): Promise<CurrenciesDto> {
     const existingCurrency = await this.currenciesModel.findOne({
-      name: data.name,
-      currency_code: data.currency_code,
+      $or: [{ name: data.name }, { currency_code: data.currency_code }],
     });
 
     if (existingCurrency) {
@@ -55,6 +54,15 @@ export class CurrenciesService {
 
     if (!existingCurrency) {
       throw new BadRequestException('Currency Not Found');
+    }
+
+    const duplicateCurrency = await this.currenciesModel.findOne({
+      _id: { $ne: id },
+      $or: [{ name: data.name }, { currency_code: data.currency_code }],
+    });
+
+    if (duplicateCurrency) {
+      throw new BadRequestException('Currency Name or Code Already Exists');
     }
 
     const currency = await this.currenciesModel.findByIdAndUpdate(

@@ -10,12 +10,21 @@ import { plainToInstance } from 'class-transformer';
 import { UpsertUnitsDto } from './dtos/upsert-units.dto';
 import { UnitPhotosService } from './unit-photos.service';
 
+import { CitiesService } from '../cities/cities.service';
+import { CountriesService } from '../countries/countries.service';
+import { UnitCategoriesService } from '../unit-categories/unit-categories.service';
+import { AppSettingsService } from '../app-settings/app-settings.service';
+
 @Injectable()
 export class UnitsService {
   constructor(
     @InjectModel(Unit.name)
     private readonly unitModel: Model<Unit>,
     private readonly unitPhotosService: UnitPhotosService,
+    private readonly citiesService: CitiesService,
+    private readonly countriesService: CountriesService,
+    private readonly unitCategoriesService: UnitCategoriesService,
+    private readonly appSettingsService: AppSettingsService,
   ) {}
 
   async findAll(data: FindAllUnitsDto) {
@@ -30,6 +39,8 @@ export class UnitsService {
     data: UpsertUnitsDto,
     photos: Express.Multer.File[],
   ): Promise<UnitsDto> {
+    await this.validateUnit(data);
+
     const photoPaths = await this.unitPhotosService.upload(photos);
 
     try {
@@ -55,7 +66,7 @@ export class UnitsService {
       throw new BadRequestException('Unit Not Found');
     }
 
-    return plainToInstance(UnitsDto, existingUnit);
+    return plainToInstance(UnitsDto, existingUnit.toObject());
   }
 
   async update(
@@ -63,6 +74,8 @@ export class UnitsService {
     data: UpsertUnitsDto,
     photos: Express.Multer.File[],
   ): Promise<UnitsDto> {
+    await this.validateUnit(data);
+
     const existingUnit = await this.unitModel.findById(id);
 
     if (!existingUnit) {
@@ -102,6 +115,8 @@ export class UnitsService {
 
     await this.unitPhotosService.delete(oldPhotoPaths);
 
+
+
     return plainToInstance(UnitsDto, unit.toObject(), {
       excludeExtraneousValues: true,
     });
@@ -119,5 +134,32 @@ export class UnitsService {
         deleted_at: Date.now(),
       },
     });
+  }
+
+  private async validateUnit(body: UpsertUnitsDto): Promise<void> {
+    const appSettings = await this.appSettingsService.findAll();
+    if (appSettings && body?.cost_per_day < appSettings.min_price) {
+      throw new BadRequestException(
+        `Cost per day can not be less than min price: ${appSettings.min_price}`,
+      );
+    }
+
+    if (body?.city_id) {
+      const city = await this.citiesService.show(body.city_id);
+      if (!city) throw new BadRequestException('City not found');
+    }
+
+    if (body?.country_id) {
+      const country = await this.countriesService.show(body.country_id);
+      if (!country) throw new BadRequestException('Country not found');
+    }
+
+    if (body?.unit_category_id) {
+      const unitCategory = await this.unitCategoriesService.show(
+        body.unit_category_id,
+      );
+      if (!unitCategory)
+        throw new BadRequestException('Unit category not found');
+    }
   }
 }
