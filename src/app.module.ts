@@ -17,6 +17,7 @@ import { CurrenciesModule } from './currencies/currencies.module';
 import { UnitCategoriesModule } from './unit-categories/unit-categories.module';
 import { UnitsModule } from './units/units.module';
 import { FilesystemModule } from './filesystem/filesystem.module';
+import { BookingsModule } from './bookings/bookings.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { FilesystemModule } from './filesystem/filesystem.module';
     UnitCategoriesModule,
     UnitsModule,
     FilesystemModule,
+    BookingsModule,
   ],
   controllers: [],
   providers: [
