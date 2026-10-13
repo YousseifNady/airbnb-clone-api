@@ -46,7 +46,7 @@ export class Unit {
   adults_count!: number;
 
   @Prop({ required: true })
-  kidsCount!: number;
+  kids_count!: number;
 
   @Prop({ required: true, default: false })
   has_internet_service!: boolean;

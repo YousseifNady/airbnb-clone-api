@@ -78,14 +78,14 @@ export class UnitsFilter {
       query.min_kids_count !== undefined ||
       query.max_kids_count !== undefined
     ) {
-      filter.kidsCount = {};
+      filter.kids_count = {};
 
       if (query.min_kids_count !== undefined) {
-        filter.kidsCount.$gte = query.min_kids_count;
+        filter.kids_count.$gte = query.min_kids_count;
       }
 
       if (query.max_kids_count !== undefined) {
-        filter.kidsCount.$lte = query.max_kids_count;
+        filter.kids_count.$lte = query.max_kids_count;
       }
     }
 

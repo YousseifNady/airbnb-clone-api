@@ -52,7 +52,7 @@ export class UpsertUnitsDto {
 
   @IsInt()
   @Min(0)
-  kidsCount!: number;
+  kids_count!: number;
 
   @IsBoolean()
   has_internet_service?: boolean;

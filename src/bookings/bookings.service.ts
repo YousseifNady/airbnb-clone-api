@@ -9,12 +9,15 @@ import { BookingFilter } from './filters/bookings.filter';
 import { FindMineBookingsDto } from './dtos/find-mine-bookings.dto';
 import { MineBookingFilter } from './filters/mine-bookings.filter';
 import { IPrincipal } from '../auth/interfaces/principal.interface';
+import { Unit } from '../units/schema/unit.schema';
 
 @Injectable()
 export class BookingsService {
     constructor(
         @InjectModel(Booking.name)
-        private readonly bookingsModel: Model<Booking>
+        private readonly bookingsModel: Model<Booking>,
+        @InjectModel(Unit.name)
+        private readonly unitsModel: Model<Unit>
     ) {}
 
     async findAll(data: FindAllBookingsDto) {

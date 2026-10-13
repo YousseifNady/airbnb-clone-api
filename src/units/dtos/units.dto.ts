@@ -44,7 +44,7 @@ export class UnitsDto {
   adults_count!: number;
 
   @Expose()
-  kidsCount!: number;
+  kids_count!: number;
 
   @Expose()
   has_internet_service!: boolean;
